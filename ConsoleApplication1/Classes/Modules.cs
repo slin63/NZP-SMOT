@@ -64,7 +64,8 @@ namespace SMOTModules
         // Calculates current infiltration rate
         {
             double q0, q1;
-            double fa;
+            double fa, ex, r0;
+
 
             // if no infiltration
             if ( (f0 - fmin < 0.0) || (k < 0.0) || (r < 0.0) )
@@ -116,8 +117,8 @@ namespace SMOTModules
                     t_step = t_step + (dt / 2.0);
                     for (int i = 0; i <= 50; i = i + 1)
                     {
-                        double ex = Math.Exp(-Math.Min(60.0, k * t_step));
-                        double r0 = ( (fmin * t_step) + (f0 - fmin) / k * (1.0 - ex) - q1 ) / (fmin + (f0 - fmin) * ex);
+                        ex = Math.Exp(-Math.Min(60.0, k * t_step));
+                        r0 = ( (fmin * t_step) + (f0 - fmin) / k * (1.0 - ex) - q1 ) / (fmin + (f0 - fmin) * ex);
                         t_step = t_step - r0;
                         if (Math.Abs(r0) <= 0.0001 * dt)
                         {
@@ -127,19 +128,105 @@ namespace SMOTModules
                 }
             }
 
+            // Infiltration capacity is recovering
+            else if (r > 0.0)
+            {
+                r0 = Math.Exp(-r * dt);
+                t_step = 1.0 - Math.Exp(-k * t_step);
+                t_step = -Math.Log(1.0 - r0 * t_step) / k;
+            }
 
         }
 
     }
 
-    //class WaterShed
-    //{
-    //    public String SWSID;
-    //    public double impArea;
-    //    public double impMaxDepth;
-    //    public double impInfilt;
+    class WaterShed
+    {
+        public String SWSID;
+        public double impArea;
+        public double impMaxDepth;
+        public double impInfilt;
 
-    //    public double perMaxDepth;
-    //    public horInf 
-    //}
+        public double perMaxDepth;
+        public Horton hInf;
+        public double impDstor; // Available impervious depression storage
+        public double perDstor;
+
+        public float dryDays;
+
+        public void InitWatershed(double f0, double fmin, double k)
+        {
+            // Create a new infiltration object
+            this.hInf = new Horton();
+
+            // Assign infiltration parameters
+            this.hInf.t_step = 0;
+            this.hInf.f0 = f0 / 12.0 / 3600.0;
+            this.hInf.fmin = f0 / 12.0 / 3600.0;
+
+            // Initialize maximum depression storage
+            this.perDstor = this.perMaxDepth;
+            this.impDstor = this.impMaxDepth;
+
+            // Unbounded maximum infiltration volume
+            this.hInf.fmax = 0;
+
+            // Recalculate on a 10 minute timestep
+            this.hInf.dt = 600;
+
+            // Regeneration coefficients, consitent with SWMM
+            this.hInf.r = -Math.Log(1 - 0.98); //98% dry along the Horton Infiltration Curve
+            this.hInf.r = this.hInf.r / 7; // Converting to units of 1/day
+            this.hInf.r = this.hInf.r / 24; // Converting to 1/hour
+            this.hInf.r = this.hInf.r / 3600; // Converting to 1/sec
+        }
+
+        public void CalculateImperviousRunoff(double RainfallDepth, double ET)
+        {
+            // Calculates imperv depression storage less ET if dry timestep. (sic)
+            this.impDstor = Math.Min(this.impMaxDepth, this.impDstor + (ET / 24.0));
+
+            // Calculate runoff for imperv and perv conditions
+            double ImpRunoff = Math.Max(0, RainfallDepth - this.impDstor - this.impInfilt);
+
+            // Update impervious depression storage
+            this.impDstor = Math.Max(0, Math.Min(this.impMaxDepth, this.impDstor + this.impInfilt - RainfallDepth));
+        }
+
+        public void CalculatePerviousRunoff(double RainfallDepth, double ET)
+        {
+            double infilt;
+
+            // Remove ET from net rainfall for consistency with SWMM.
+            RainfallDepth = Math.Max(0, RainfallDepth);
+
+            // Convert rainfall rate to infiltraiton timestep.
+            RainfallDepth = RainfallDepth / 3600.0 / this.hInf.dt;
+
+            // Calculate infiltration rate at current timestep using the Horton infiltration method.
+            double perRunoff = 0;
+            for (int i = 0; i <= (int)(3600.0 / this.hInf.dt); i = i + 1)
+            {
+                // Calculate current Horton infiltration rate.
+                // Convert to feet/sec from in/timestep.
+                this.hInf.Rain(RainfallDepth / 12 / hInf.dt, (this.perMaxDepth - this.perDstor) / 12);
+
+                // Get Horton infiltration at end of timestep.
+                // Convert from feet/sec to in/timestep.
+                infilt = this.hInf.q * 12.0 * this.hInf.dt;
+
+                // Calculate runoff for pervious condition.
+                perRunoff += Math.Max(0, RainfallDepth - this.perDstor - infilt);
+
+
+
+                // Update pervious depression storage.
+                // Me.pDstor = WorksheetFunction.Max(0, WorksheetFunction.Min(Me.pMaxDepth, Me.pDstor + (infilt - RainfallDepth) + ET / 24))
+                // Modify ET for fine step
+                // Me.pDstor = WorksheetFunction.Max(0, WorksheetFunction.Min(Me.pMaxDepth, Me.pDstor + (infilt - RainfallDepth) + ET / 24 / (3600 / Me.hInf.dt)+ CalculatePerviousRunoff) )
+                this.perDstor = Math.Max(0, Math.Min(this.perMaxDepth, this.perDstor + (infilt - RainfallDepth + (ET / 24.0 / (3600.0 / this.hInf.dt)))));
+            }
+        }
+        
+    }
 }

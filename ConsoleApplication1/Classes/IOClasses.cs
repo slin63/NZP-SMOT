@@ -1,25 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-// Will probably need a seperate module for     
-
-namespace SMOTOutline
+namespace SMOTStructs
 {
-    using RangeDouble = Tuple<double, double>;
     using RangeInt = Tuple<int, int>;
-
-    public class PseudoMain
-    {
-        static XMLHolder processParameters(SMOTParameters params)
-        {
-            XMLHolder output;
-            return output;
-        }
-    }
-
+    
     class SMOTParameters
     {
         // Land cover characterization data
@@ -34,6 +19,9 @@ namespace SMOTOutline
                                          // (ponding depth + [media depth * media porosity] + [gravel depth * gravel porosity]) 
                                          // Recommended 21"
 
+        // Major pond data
+        public bool majorOnlinePond; // True if pond consumes > 5% of total AOI
+
         // Regulatory data
         public bool applTMDL; // Applicable total maximum daily load
         public bool EISA438; // Technical Guidance on Implementing the Stormwater Runoff Requirements for Federal Projects under Section 438 of the Energy Independence and Security Act 
@@ -41,10 +29,8 @@ namespace SMOTOutline
 
         // Ambiguous fields. . . no units specified
         // Precipitation data
-        public double hourlyDepthInches;
-        public double gageProximity; // Distance to installation
-        public double periodOfRecord; // Length of record? I guess?
-        public double dataQuality; // Quality of data (% of data flagged / missing)
+        public double percentile95Rainfall; // Inches; from spreadsheet; 95th percentile of rainfall
+        public double averageDryPeriods; // Days; from spreadsheet
 
         // Evaporation data
         public double avgInchPerDay; // Listed as "record type", monthly estimate for average daily depth
@@ -55,18 +41,11 @@ namespace SMOTOutline
         public double percentC;
         public double percentD;
 
-        // Major pond data
-        public bool majorOnlinePond; // True if pond consumes > 5% of total AOI
-
-
-
-        // Horton Equation Values (in/hr)
-        public Dictionary<string, RangeDouble> hortonInfilVals = new Dictionary<string, RangeDouble>()
-        {
-            { "A_min", new RangeDouble (0.4, 4.7) },
-            { "A_max", new RangeDouble (6.0, 10.0) },
-            { "B_min", new RangeDouble (0.1, 0.3) } // not going to finish its gonna be tedious look at the doc
-        };
+        // Horton Soil Properties (see SMOTStructs namespace for info)
+        public HSGInfo hsgA;
+        public HSGInfo hsgB;
+        public HSGInfo hsgC;
+        public HSGInfo hsgD;
 
         public Dictionary<string, RangeInt> hortonRegionDrying = new Dictionary<string, RangeInt>()
         {
@@ -76,8 +55,14 @@ namespace SMOTOutline
             { "humid_or_prolonged_precip", new RangeInt (7, 14) }
         };
 
-        
+    }
 
+    struct HSGInfo // Struct to hold data for HSG soils.
+    {
+        public double infilMax;  // in/hr
+        public double infilMin;  // in/hr
+        public double dryDays;   // 1 - 14
+        public double decayRate; // (per hour (weird unit??))
     }
 
     class XMLHolder

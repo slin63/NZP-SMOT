@@ -46,7 +46,7 @@
     <Compile Include="Analysis.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Preprocessing\Rainfall.cs" />
-    <Compile Include="Preprocessing\InputMod.cs" />
+    <Compile Include="Preprocessing\HSGAve.cs" />
     <Compile Include="Simulation\Simulation.cs" />
     <Compile Include="Classes\ClassModules.cs" />
     <Compile Include="Classes\IO.cs" />
@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="InputFiles\RainfallData.csv" />
+    <None Include="SampleInputs\RainfallData.csv" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

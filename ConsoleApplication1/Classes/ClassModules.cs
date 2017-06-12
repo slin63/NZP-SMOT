@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SMOTModules
+namespace Modules
 {
     class BMP
     // For simple representation of a pond BMP as defined by

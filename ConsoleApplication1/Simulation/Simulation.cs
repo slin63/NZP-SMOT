@@ -9,11 +9,6 @@ namespace SMOTCalc
 {
     public class AMain
     {
-        public static void Main(string[] args)
-        {
-            Test.TestTest.writeTest();
-        }
-
         public void AMainMaster(bool simMethod)
         {
             // This is where it gets weird . . .

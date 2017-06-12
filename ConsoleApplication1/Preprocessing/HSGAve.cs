@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InputModification
+namespace Preprocessing
 {
     static class HSGParser
     {
-        static public void averageHSGInfo(ref SMOT_IO.SMOTParameters input)
+        static public void averageHSGInfo(ref SMOT_IO.InputParameters input)
         {
             double avgInfilMax = _calcAvgInfilMax(input);
             double avgInfilMin = _calcAvgInfilMin(input);
@@ -19,7 +19,7 @@ namespace InputModification
             input.setAVGHSGInfo(avgInfilMax, avgInfilMin, avgDryDays, avgHortonDecay);
         }
 
-        static private double _calcAvgInfilMax(SMOT_IO.SMOTParameters input)
+        static private double _calcAvgInfilMax(SMOT_IO.InputParameters input)
         {
             double lineA = (input.hsgA.infilMax * input.hsgAreaA);
             double lineB = (input.hsgB.infilMax * input.hsgAreaB);
@@ -29,7 +29,7 @@ namespace InputModification
             return (lineA + lineB + lineC + lineD) / input.totalImpArea;
         }
 
-        static private double _calcAvgInfilMin(SMOT_IO.SMOTParameters input)
+        static private double _calcAvgInfilMin(SMOT_IO.InputParameters input)
         {
             double lineA = (input.hsgA.infilMin * input.hsgAreaA);
             double lineB = (input.hsgB.infilMin * input.hsgAreaB);
@@ -39,7 +39,7 @@ namespace InputModification
             return (lineA + lineB + lineC + lineD) / input.totalImpArea;
         }
 
-        static private double _calcAvgDryDays(SMOT_IO.SMOTParameters input)
+        static private double _calcAvgDryDays(SMOT_IO.InputParameters input)
         {
             double lineA = (input.hsgA.dryDays * input.hsgAreaA);
             double lineB = (input.hsgB.dryDays * input.hsgAreaB);
@@ -49,7 +49,7 @@ namespace InputModification
             return (lineA + lineB + lineC + lineD) / input.totalImpArea;
         }
 
-        static private double _calcAvgHortonDecay(SMOT_IO.SMOTParameters input)
+        static private double _calcAvgHortonDecay(SMOT_IO.InputParameters input)
         {
 
             double lineA = (input.hsgA.decayRate * input.hsgAreaA);
@@ -63,13 +63,3 @@ namespace InputModification
 }
 
 
-namespace Test
-{
-    static class TestTest
-    {
-        static public void writeTest()
-        {
-            Console.WriteLine("thiis is a test");
-        }
-    }
-}

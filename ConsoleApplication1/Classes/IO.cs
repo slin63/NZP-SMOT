@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace SMOT_IO
 {
+    using System.Linq;
     using RangeInt = Tuple<int, int>;
-    
-    class SMOTParameters
+
+    class InputParameters
     {
         // TODO: Constructor to load data in via XML sheet
         // Base data
@@ -75,14 +76,61 @@ namespace SMOT_IO
             this.avgHorton.dryDays = dryDays;
             this.avgHorton.decayRate = decayRate;
         }
-
     }
 
+
+
+    // https://stackoverflow.com/questions/5282999/reading-csv-file-and-storing-values-into-an-array
     class CSVFile
     {
-        // TODO: CSV File info. Parse csv file function
+        // TODO: 
+        //     : Make this point to an uploaded file on the website. 
+        //     : This will be fun!
+        private String _fileLocation;
+        public List<CSVRow> rows = new List<CSVRow>();
+        public bool hasHeader;
+
+        public CSVFile(String fileLocation, bool hasHeader)
+        {
+            this._fileLocation = fileLocation;
+            this.hasHeader = hasHeader;
+            this._readIntoRows();
+        }
+
+        public int length()
+        {
+            return rows.Count;
+        }
+
+        private void _readIntoRows()
+        {
+            using (var fs = System.IO.File.OpenRead(this._fileLocation))
+            using (var reader = new System.IO.StreamReader(fs))
+            {
+                if (this.hasHeader) // Skip a line if this file has a header
+                {
+                    reader.ReadLine();
+                }
+                while (!reader.EndOfStream)
+                {  
+                    String line = reader.ReadLine();
+                    CSVRow lineProcessed = new CSVRow(line);
+                    this.rows.Add(lineProcessed);
+                }
+            }
+        }   
     }
 
+    struct CSVRow
+    {
+        // Helper struct that parses CSV row strings and sorts them into ordered lists.
+        public List<String> row;
+
+        public CSVRow(String rowString)
+        {
+            this.row = rowString.Split(',').ToList<String>();
+        }
+    }
 
     struct HSGInfo // Struct to hold data for HSG soils.
     {

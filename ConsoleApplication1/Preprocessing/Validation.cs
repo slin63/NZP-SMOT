@@ -10,7 +10,7 @@ namespace Validation
     {
         private static String _blankField = "N/A";
 
-        static public bool ValidateInputs(SMOT_IO.InputParameters input)
+        static public bool ValidateInputs(SMOT_IO.InputParams input)
         {
             // Calls validation functions
             ValidationTrace regulationPass, watershedPass, rainfallPass, soilsPass;
@@ -79,7 +79,7 @@ namespace Validation
             return outTrace;
         }
 
-        static ValidationTrace ValidateRegulation(SMOT_IO.InputParameters input)
+        static ValidationTrace ValidateRegulation(SMOT_IO.InputParams input)
         {
             // Initialize trace and define it as a "watershed" type trace
             ValidationTrace trace = new ValidationTrace(ValidationTrace.InputType.Regulation);
@@ -151,7 +151,7 @@ namespace Validation
             return trace;
         }
 
-        static ValidationTrace ValidateWatershed(SMOT_IO.InputParameters input)
+        static ValidationTrace ValidateWatershed(SMOT_IO.InputParams input)
         {
             ValidationTrace trace = new ValidationTrace(ValidationTrace.InputType.Watershed);
 
@@ -182,7 +182,7 @@ namespace Validation
 
         }
 
-        static ValidationTrace ValidateRainfall(SMOT_IO.InputParameters input)
+        static ValidationTrace ValidateRainfall(SMOT_IO.InputParams input)
         {
             // Initialize trace and define it as a "watershed" type trace
             ValidationTrace trace = new ValidationTrace(ValidationTrace.InputType.Rainfall);
@@ -199,7 +199,7 @@ namespace Validation
             return trace;
         }
 
-        static ValidationTrace ValidateSoils(SMOT_IO.InputParameters input)
+        static ValidationTrace ValidateSoils(SMOT_IO.InputParams input)
         {
             // Initialize trace and define it as a "watershed" type trace
             ValidationTrace trace = new ValidationTrace(ValidationTrace.InputType.Soils);
@@ -216,7 +216,7 @@ namespace Validation
             return trace;
         }
 
-        static private bool _checkSoilPercent(SMOT_IO.InputParameters input)
+        static private bool _checkSoilPercent(SMOT_IO.InputParams input)
         {
             if ((input.hsgAreaA >= 0) && (input.hsgAreaB >= 0) && (input.hsgAreaC >= 0) && (input.hsgAreaD >= 0))
             {
@@ -231,7 +231,7 @@ namespace Validation
                 return false;
         }
 
-        static private bool _checkBaseInfo(SMOT_IO.InputParameters input)
+        static private bool _checkBaseInfo(SMOT_IO.InputParams input)
         {
             if (input.baseLocation != _blankField && input.baseName != _blankField)
                 return true;
@@ -239,7 +239,7 @@ namespace Validation
                 return false;
         }
 
-        static private bool _checkWatershedAreaInfo(SMOT_IO.InputParameters input)
+        static private bool _checkWatershedAreaInfo(SMOT_IO.InputParams input)
         {
             if (input.storageDepthImpervious <= 0 || input.storageDepthPervious <= 0 || input.totalImpArea <= 0)
                 return false;
@@ -247,7 +247,7 @@ namespace Validation
                 return true;
         }
 
-        static private bool _checkWatershedIsNumbers(SMOT_IO.InputParameters input)
+        static private bool _checkWatershedIsNumbers(SMOT_IO.InputParams input)
         {
             if (input.landCoverImpervious >= 0 && input.landCoverPervious >= 0)
             {

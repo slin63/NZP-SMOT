@@ -13,7 +13,7 @@ namespace Preprocessing
         // Every instance where the precip is less than the dryDayThreshold, is a dryDay
         // Every instance where the day before the current row's day is greater than threshold
         //              it is considered a dry period.
-        static public double calcAverageDryDays(SMOT_IO.CSVFile dryDaySheet, ref SMOT_IO.InputParameters input)
+        static public double calcAverageDryDays(SMOT_IO.CSVFile dryDaySheet, ref SMOT_IO.InputParams input)
         // The calculation in the original VBA code doesn't make much sense.
         // This calculation is a placeholder for now. 
         // DO NOT USE IN PRODUCTION!
@@ -48,7 +48,7 @@ namespace Preprocessing
     {
         const double threshhold = 0.1;
 
-        static public double calc95thPercentile(SMOT_IO.CSVFile rainfallSheet, ref SMOT_IO.InputParameters input)
+        static public double calc95thPercentile(SMOT_IO.CSVFile rainfallSheet, ref SMOT_IO.InputParams input)
         {
             // The calculation in the original VBA code doesn't make much sense.
             // This calculation is a placeholder for now. 

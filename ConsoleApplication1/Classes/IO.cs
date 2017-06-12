@@ -6,10 +6,11 @@ namespace SMOT_IO
     using System.Linq;
     using RangeInt = Tuple<int, int>;
 
-    class InputParameters
+    class InputParams
     {
         // TODO: Constructor to load data in via XML sheet
         // Base data
+        //       Defaults should read "N/A"
         public String baseLocation;
         public String baseName;
 
@@ -75,6 +76,33 @@ namespace SMOT_IO
             this.avgHorton.infilMin = infilMin;
             this.avgHorton.dryDays = dryDays;
             this.avgHorton.decayRate = decayRate;
+        }
+
+        public double totalHsgArea()
+        {
+            return hsgAreaA + hsgAreaB + hsgAreaC + hsgAreaD;
+        }
+    }
+
+    class AnalysisParams
+    {
+        public double totalSoilArea;
+        public double hsgAPCTResult;
+        public double hsgBPCTResult;
+        public double hsgCPCTResult;
+        public double hsgDPCTResult;
+        
+        public double initAbsResult;
+
+        public AnalysisParams(double totalSoilArea, double hsgAreaA, double hsgAreaB, double hsgAreaC, double hsgAreaD)
+        {
+            this.totalSoilArea = totalSoilArea;
+            this.hsgAPCTResult = hsgAreaA / totalSoilArea;
+            this.hsgBPCTResult = hsgAreaB / totalSoilArea;
+            this.hsgCPCTResult = hsgAreaC / totalSoilArea;
+            this.hsgDPCTResult = hsgAreaD / totalSoilArea;
+
+            this.initAbsResult = ((hsgAreaA * 2.08) + (hsgAreaB * 0.9) + (hsgAreaC * 0.53) + (hsgAreaD * 0.38)) / totalSoilArea;
         }
     }
 
@@ -144,3 +172,4 @@ namespace SMOT_IO
     {
     }
 }
+

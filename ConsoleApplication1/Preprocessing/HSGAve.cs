@@ -8,7 +8,7 @@ namespace Preprocessing
 {
     static class HSGParser
     {
-        static public void averageHSGInfo(ref SMOT_IO.InputParameters input)
+        static public void averageHSGInfo(ref SMOT_IO.InputParams input)
         {
             double avgInfilMax = _calcAvgInfilMax(input);
             double avgInfilMin = _calcAvgInfilMin(input);
@@ -19,7 +19,7 @@ namespace Preprocessing
             input.setAVGHSGInfo(avgInfilMax, avgInfilMin, avgDryDays, avgHortonDecay);
         }
 
-        static private double _calcAvgInfilMax(SMOT_IO.InputParameters input)
+        static private double _calcAvgInfilMax(SMOT_IO.InputParams input)
         {
             double lineA = (input.hsgA.infilMax * input.hsgAreaA);
             double lineB = (input.hsgB.infilMax * input.hsgAreaB);
@@ -29,7 +29,7 @@ namespace Preprocessing
             return (lineA + lineB + lineC + lineD) / input.totalImpArea;
         }
 
-        static private double _calcAvgInfilMin(SMOT_IO.InputParameters input)
+        static private double _calcAvgInfilMin(SMOT_IO.InputParams input)
         {
             double lineA = (input.hsgA.infilMin * input.hsgAreaA);
             double lineB = (input.hsgB.infilMin * input.hsgAreaB);
@@ -39,7 +39,7 @@ namespace Preprocessing
             return (lineA + lineB + lineC + lineD) / input.totalImpArea;
         }
 
-        static private double _calcAvgDryDays(SMOT_IO.InputParameters input)
+        static private double _calcAvgDryDays(SMOT_IO.InputParams input)
         {
             double lineA = (input.hsgA.dryDays * input.hsgAreaA);
             double lineB = (input.hsgB.dryDays * input.hsgAreaB);
@@ -49,7 +49,7 @@ namespace Preprocessing
             return (lineA + lineB + lineC + lineD) / input.totalImpArea;
         }
 
-        static private double _calcAvgHortonDecay(SMOT_IO.InputParameters input)
+        static private double _calcAvgHortonDecay(SMOT_IO.InputParams input)
         {
 
             double lineA = (input.hsgA.decayRate * input.hsgAreaA);

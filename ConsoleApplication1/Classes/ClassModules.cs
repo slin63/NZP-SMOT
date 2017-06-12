@@ -227,6 +227,5 @@ namespace SMOTModules
                 this.perDstor = Math.Max(0, Math.Min(this.perMaxDepth, this.perDstor + (infilt - RainfallDepth + (ET / 24.0 / (3600.0 / this.hInf.dt)))));
             }
         }
-        
     }
 }

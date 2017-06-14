@@ -48,6 +48,8 @@ namespace SMOT_IO
         // Evaporation data
         public double avgInchPerDay; // Listed as "record type", monthly estimate for average daily depth
 
+        public ETInfo ETInfo;
+
         // Hydrologic soil group data, sums up to 1.0
         public double hsgAreaA;
         public double hsgAreaB;
@@ -94,6 +96,12 @@ namespace SMOT_IO
         
         public double initAbsResult;
 
+        public CSVFile rainfallTimeseries;
+
+        public double designStormBMP;
+        public double CSBMP;    // Not sure what these CSBMP fields do.
+        public double CSOBMP;   // Not sure what these CSBMP fields do.
+
         public AnalysisParams(double totalSoilArea, double hsgAreaA, double hsgAreaB, double hsgAreaC, double hsgAreaD)
         {
             this.totalSoilArea = totalSoilArea;
@@ -105,9 +113,7 @@ namespace SMOT_IO
             this.initAbsResult = ((hsgAreaA * 2.08) + (hsgAreaB * 0.9) + (hsgAreaC * 0.53) + (hsgAreaD * 0.38)) / totalSoilArea;
         }
     }
-
-
-
+    
     // https://stackoverflow.com/questions/5282999/reading-csv-file-and-storing-values-into-an-array
     class CSVFile
     {
@@ -167,6 +173,59 @@ namespace SMOT_IO
         public double dryDays;   // 1 - 14
         public double decayRate; // (per hour (weird unit??))
     }
+
+    class ETInfo
+    {
+        public double ETJan;
+        public double ETFeb;
+        public double ETMarch;
+        public double ETApril;
+        public double ETMay;
+        public double ETJune;
+        public double ETJuly;
+        public double ETAugust;
+        public double ETSeptember;
+        public double ETOctober;
+        public double ETNovember;
+        public double ETDecember;
+
+        public double getMonthlyET(int monthInt)
+        {
+            switch (monthInt)
+            {
+                case 1:
+                    return ETJan;
+                case 2:
+                    return ETFeb;
+                case 3:
+                    return ETMarch;
+                case 4:
+                    return ETApril;
+                case 5:
+                    return ETMay;
+                case 6:
+                    return ETJune;
+                case 7:
+                    return ETJuly;
+                case 8:
+                    return ETAugust;
+                case 9:
+                    return ETSeptember;
+                case 10:
+                    return ETOctober;
+                case 11:
+                    return ETNovember;
+                case 12:
+                    return ETDecember;
+                default:
+                    throw new IndexOutOfRangeException("Attempted to access ET values for a month with invalid integer value: " + monthInt);
+            }
+        }
+        
+    }
+
+
+
 
     class XMLHolder
     {

@@ -15,24 +15,41 @@ namespace Modules
         public double bmpInfilt;
         public double bmpDepth;
 
-        public void InitBMP()
+        public BMP(Watershed watershed, SMOT_IO.InputParams input)
         {
-            bmpDepth = bmpMaxDepth;
+            this.bmpDepth = input.effectiveBMPDepth;
+            this.bmpMaxDepth = input.effectiveBMPDepth;
+
+            // Initial guess at BMP area as 3% of watershed area
+            this.bmpArea = watershed.impArea * 0.03;
+
+            // Calculating the BMP's infiltration rate
+            this.bmpInfilt = _calculateBMPInfilt(input);
         }
 
-        public double CalculateBMPOverflow(double Inflow, double ET)
+        private double _calculateBMPInfilt(SMOT_IO.InputParams input)
         {
-            // Recalculate inflow as runoff depth into BMP
-            Inflow /= bmpArea;
+            double num = (1.02 * input.hsgAreaA + 0.52 * input.hsgAreaB + 0.27 * input.hsgAreaC + 0.05 * input.hsgAreaD);
+            double denom = (input.hsgAreaA + input.hsgAreaB + input.hsgAreaC + input.hsgAreaD);
+
+            return num / denom; // infiltration rate in in/hr
+        }
+
+        public double CalculateBMPOverflow(double ET)
+        {
+            // Original code in comments
+            // Returns the amount of overflow. Updates BMP storage capacity to reflect ET.
 
             // Calculate loss due to ET
-            bmpDepth = Math.Min(bmpMaxDepth, bmpDepth + (ET / 24.0));
-
-            // Update available BMP storage
-            bmpDepth = Math.Max(bmpMaxDepth, bmpMaxDepth - Math.Min(bmpMaxDepth, bmpDepth + bmpInfilt - Inflow));
+            //bmpDepth = Math.Min(bmpMaxDepth, bmpDepth + (ET / 24.0));
+            bmpDepth = Math.Min(bmpMaxDepth, bmpDepth + ET);
 
             // Calculate BPM Overflow
-            double BMPOverflow = Math.Max(0, Inflow - bmpDepth - bmpInfilt);
+            //double BMPOverflow = Math.Max(0, Inflow - bmpDepth - bmpInfilt);
+            double BMPOverflow = Math.Max(0, bmpDepth - (bmpMaxDepth + ET + bmpInfilt));
+            
+            // Update available BMP storage
+            bmpDepth = Math.Max(bmpMaxDepth, bmpMaxDepth - Math.Min(bmpMaxDepth, bmpDepth + bmpInfilt));
 
             return BMPOverflow;
         }
@@ -140,7 +157,7 @@ namespace Modules
 
     }
 
-    class WaterShed
+    class Watershed
     {
         public String SWSID;
         public double impArea;
@@ -152,9 +169,27 @@ namespace Modules
         public double impDstor; // Available impervious depression storage
         public double perDstor;
 
-        public float dryDays;
+        public double dryDays;
 
-        public void InitWatershed(double f0, double fmin, double k)
+        public Watershed(double f0, double fmin, double k, 
+                         double perMaxDepth, double impMaxDepth,
+                         double impArea, double dryDays,
+                         String SWSID)
+        {
+            this.SWSID = SWSID;
+            this.perMaxDepth = perMaxDepth;
+            this.impMaxDepth = impMaxDepth;
+            _InitWatershed(f0, fmin, k);
+            this.impInfilt = 0;
+            this.impArea = impArea;
+
+            if (dryDays < 0)
+                this.dryDays = 7;
+            else
+                this.dryDays = dryDays;
+        }
+
+        public void _InitWatershed(double f0, double fmin, double k)
         {
             // Create a new infiltration object
             this.hInf = new Horton();
@@ -181,7 +216,7 @@ namespace Modules
             this.hInf.r = this.hInf.r / 3600; // Converting to 1/sec
         }
 
-        public void CalculateImperviousRunoff(double RainfallDepth, double ET)
+        public double CalculateImperviousRunoff(double RainfallDepth, double ET)
         {
             // Calculates imperv depression storage less ET if dry timestep. (sic)
             this.impDstor = Math.Min(this.impMaxDepth, this.impDstor + (ET / 24.0));
@@ -191,9 +226,11 @@ namespace Modules
 
             // Update impervious depression storage
             this.impDstor = Math.Max(0, Math.Min(this.impMaxDepth, this.impDstor + this.impInfilt - RainfallDepth));
+
+            return ImpRunoff;
         }
 
-        public void CalculatePerviousRunoff(double RainfallDepth, double ET)
+        public double CalculatePerviousRunoff(double RainfallDepth, double ET)
         {
             double infilt;
 
@@ -226,6 +263,8 @@ namespace Modules
                 // Me.pDstor = WorksheetFunction.Max(0, WorksheetFunction.Min(Me.pMaxDepth, Me.pDstor + (infilt - RainfallDepth) + ET / 24 / (3600 / Me.hInf.dt)+ CalculatePerviousRunoff) )
                 this.perDstor = Math.Max(0, Math.Min(this.perMaxDepth, this.perDstor + (infilt - RainfallDepth + (ET / 24.0 / (3600.0 / this.hInf.dt)))));
             }
+
+            return perRunoff;
         }
     }
 }

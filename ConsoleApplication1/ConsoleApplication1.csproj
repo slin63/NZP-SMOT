@@ -47,11 +47,12 @@
     <Compile Include="main.cs" />
     <Compile Include="Preprocessing\Rainfall.cs" />
     <Compile Include="Preprocessing\HSGAve.cs" />
-    <Compile Include="Simulation\Simulation.cs" />
+    <Compile Include="Simulation\Analysis.cs" />
     <Compile Include="Classes\ClassModules.cs" />
     <Compile Include="Classes\IO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Preprocessing\Validation.cs" />
+    <Compile Include="Simulation\Simulation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

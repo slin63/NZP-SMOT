@@ -99,8 +99,8 @@ namespace SMOT_IO
         public CSVFile rainfallTimeseries;
 
         public double designStormBMP;
-        public double CSBMP;    // Not sure what these CSBMP fields do.
-        public double CSOBMP;   // Not sure what these CSBMP fields do.
+        public double CSBMPArea;    // Surface area of BMP found through ContinuousSim._findSurfaceArea()
+        public double CSOBMPArea;   // CSBMPArea + AddHeterogeneity(Soils Info, CSBMPArea)
 
         public AnalysisParams(double totalSoilArea, double hsgAreaA, double hsgAreaB, double hsgAreaC, double hsgAreaD)
         {

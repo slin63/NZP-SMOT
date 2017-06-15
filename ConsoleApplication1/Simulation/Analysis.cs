@@ -5,12 +5,17 @@ namespace Simulation
 {
     static class Analysis
     {
+        // TODO: We might need to pass input and medianInfo refs.
+        //       That depends on if this is the final function that'll be using those datasets
         private static String _blankField = "N/A";
-        public static void RunAnalysis(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        public enum Approaches { DesignStorm, ContinuousOnly, ContinuousWithOptimization };
+
+        public static AnalysisTrace RunAnalysis(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
             // TODO :: 
             // Currently void, but should return a detailed trace with analysis results.
             bool heterogeneity = _heteroAnalysis(medianInfo);
+            AnalysisTrace aTrace = new AnalysisTrace();
 
             // Checking if has no pond
             if (!input.majorOnlinePond)
@@ -19,17 +24,17 @@ namespace Simulation
                 if (_noApplTMDL(input))
                 {
                     if (_noMS4Components(input))
-                        _designForNoWQComponents(input, medianInfo);
+                        aTrace = _designForNoWQComponents(ref aTrace, input, medianInfo);
                     else
-                        _designForMS4Permit(input, medianInfo);
+                        aTrace = _designForMS4Permit(ref aTrace, input, medianInfo);
                 }
 
                 else
                 {
                     if (_noMS4Components(input))
-                        _designForTMDLPermit(input, medianInfo);
+                        aTrace = _designForTMDLPermit(ref aTrace, input, medianInfo);
                     else
-                        _designForTMDLMS4Permit(input, medianInfo);
+                        aTrace = _designForTMDLMS4Permit(ref aTrace, input, medianInfo);
                 }
             }
 
@@ -39,75 +44,225 @@ namespace Simulation
                 if (_noApplTMDL(input))
                 {
                     if (_noMS4Components(input))
-                        _pondDesignForNoWQComponents(input, medianInfo);
+                        aTrace = _pondDesignForNoWQComponents(ref aTrace, input, medianInfo);
                     else
-                        _pondDesignForMS4Permit(input, medianInfo);
+                        aTrace = _pondDesignForMS4Permit(ref aTrace, input, medianInfo);
                 }
 
                 else
                 {
                     if (_noMS4Components(input))
-                        _pondDesignForTMDLPermit(input, medianInfo);
+                        aTrace = _pondDesignForTMDLPermit(ref aTrace, input, medianInfo);
                     else
-                        _pondDesignForTMDLMS4Permit(input, medianInfo);
+                        aTrace = _pondDesignForTMDLMS4Permit(ref aTrace, input, medianInfo);
                 }
 
-                // If pond: Run the simulation no matter what
-                _pondSimulationCall(input, medianInfo);
+                //// If pond: Run the simulation no matter what
+                //aTrace = _pondSimulationCall(ref aTrace, input, medianInfo);
             }
 
+            return aTrace;
         }
         
-        public static SimTrace _callSimulation(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        public static SimModels _callSimulation(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
             return ContinuousSim.AMain(input, medianInfo);
         }
+        
+        static private AnalysisTrace _designForNoWQComponents(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        {
+            // DONE
+            // Lines 410 - 456
+            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            SimModels simTrace = _callSimulation(input, medianInfo);
 
-        private static void _designForTMDLMS4Permit(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+            medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
+            medianInfo.CSOBMPArea = simTrace.bmp.bmpArea +
+                __AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD)
+                * simTrace.bmp.bmpArea;
+
+            if (medianInfo.CSBMPArea > medianInfo.designStormBMP)
+            {
+                aTrace.analysisRec = Approaches.DesignStorm;
+                aTrace.reason = "BMP Size in Continuous Simulation > BMP size in Design Storm.";
+            }
+                
+            else
+            {
+                if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+                {
+                    aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                    aTrace.reason = "BMP size in Continuous Simulation < BMP size in Design Storm. The soils are heterogeneous and the optimization result is significant.";
+                }
+                    
+                else
+                {
+                    aTrace.analysisRec = Approaches.ContinuousOnly;
+                    aTrace.reason = "BMP size in Continuous Simulation < BMP size in Design Storm. The soils are not heterogeneous enough and the optimization result is not significant.";
+                }       
+            }
+
+            return aTrace;
+        }
+
+        private static AnalysisTrace _designForMS4Permit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
             medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
-            SimTrace simTrace = _callSimulation(input, medianInfo);
+            SimModels simTrace = _callSimulation(input, medianInfo);
+
+            medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
+            medianInfo.CSOBMPArea = simTrace.bmp.bmpArea +
+                __AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD)
+                * simTrace.bmp.bmpArea;
+
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The MS4 regulation has water quality components. The soils are heterogeneous and the optimization results is significant.";
+            }
+
+            else
+            {
+                aTrace.analysisRec = Approaches.ContinuousOnly;
+                aTrace.reason = "The MS4 regulation has water quality components. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
         }
 
-        private static void _designForTMDLPermit(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        private static AnalysisTrace _designForTMDLPermit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            throw new NotImplementedException();
+            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            SimModels simTrace = _callSimulation(input, medianInfo);
+
+            medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
+            medianInfo.CSOBMPArea = simTrace.bmp.bmpArea +
+                __AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD)
+                * simTrace.bmp.bmpArea;
+
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The TMDL regulation has water quality components. The soils are heterogeneous and the optimization results is significant.";
+            }
+
+            else
+            {
+                aTrace.analysisRec = Approaches.ContinuousOnly;
+                aTrace.reason = "The TMDL regulation has water quality components. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
         }
 
-        private static void _designForMS4Permit(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        private static AnalysisTrace _designForTMDLMS4Permit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            throw new NotImplementedException();
+            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            SimModels simTrace = _callSimulation(input, medianInfo);
+
+            medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
+            medianInfo.CSOBMPArea = simTrace.bmp.bmpArea +
+                __AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD)
+                * simTrace.bmp.bmpArea;
+
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The MS4 and TMDL regulation has water quality components. The soils are heterogeneous and the optimization results is significant.";
+            }
+
+            else
+            {
+                aTrace.analysisRec = Approaches.ContinuousOnly;
+                aTrace.reason = "The MS4 and TMDL regulation has water quality components. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
         }
 
-        static private void _designForNoWQComponents(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        private static AnalysisTrace _pondDesignForNoWQComponents(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            ;
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The watershed has a major online pond. The soils are heterogeneous and the optimization results is significant.";
+            }
+
+            else
+            {
+                aTrace.analysisRec = Approaches.ContinuousOnly;
+                aTrace.reason = "The watershed has a major online pond. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
+        }
+        
+        private static AnalysisTrace _pondDesignForMS4Permit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        {
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The watershed has a major online pond. The MS4 regulation has water quality components. The soils are heterogeneous and the optimization results is significant.";
+            }
+
+            else
+            {
+                aTrace.analysisRec = Approaches.ContinuousOnly;
+                aTrace.reason = "The watershed has a major online pond. The MS4 regulation has water quality components. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
         }
 
-        private static void _pondDesignForTMDLPermit(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        private static AnalysisTrace _pondDesignForTMDLPermit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            throw new NotImplementedException();
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The watershed has a major online pond. The TMDL regulation has water quality components. The soils are heterogeneous and the optimization results is significant.";
+            }                                                               
+                                                                            
+            else                                                            
+            {                                                               
+                aTrace.analysisRec = Approaches.ContinuousOnly;             
+                aTrace.reason = "The watershed has a major online pond. The TMDL regulation has water quality components. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
         }
 
-        private static void _pondDesignForTMDLMS4Permit(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        private static AnalysisTrace _pondDesignForTMDLMS4Permit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            throw new NotImplementedException();
+            if (__AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD) < -0.15)
+            {
+                aTrace.analysisRec = Approaches.ContinuousWithOptimization;
+                aTrace.reason = "The watershed has a major online pond. The TMDL and MS4 regulations have water quality components. The soils are heterogeneous and the optimization results is significant.";
+            }
+
+            else
+            {
+                aTrace.analysisRec = Approaches.ContinuousOnly;
+                aTrace.reason = "The watershed has a major online pond. The TMDL and MS4 regulations have water quality components. The soils are not heterogeneous enough and the optimization results is not significant.";
+            }
+
+            return aTrace;
         }
 
-        private static void _pondSimulationCall(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        private static AnalysisTrace _pondSimulationCall(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            throw new NotImplementedException();
+            // None of the pond functions actually use this data. 
+            // This function may just get scrapped.
+            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            SimModels simTrace = _callSimulation(input, medianInfo);
+
+            medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
+            medianInfo.CSOBMPArea = simTrace.bmp.bmpArea +
+                __AddHeterogeneity(input.hsgAreaA, input.hsgAreaB, input.hsgAreaC, input.hsgAreaD)
+                * simTrace.bmp.bmpArea;
+
+            return aTrace;
         }
 
-        private static void _pondDesignForMS4Permit(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void _pondDesignForNoWQComponents(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
-        {
-            throw new NotImplementedException();
-        }
 
         static private bool _noWQComponents(SMOT_IO.InputParams input)
         {
@@ -221,6 +376,29 @@ namespace Simulation
             return heterogeneity;
         }
 
+        private static double __AddHeterogeneity(double hsgAreaA, double hsgAreaB, double hsgAreaC, double hsgAreaD)
+        {
+            // BMP Sizing Difference between the Optimized and non-Optimized Sizing Strategies (%)
+            // Infiltration for calculating BMP size
+            // Soil A: 1.02 in/hr
+            // Soil B: 0.52 in/hr
+            // Soil C: 0.27 in/hr
+            // Soil D: 0.05 in/hr
+            double totalArea = hsgAreaA + hsgAreaB + hsgAreaC + hsgAreaD;
+            double avgInfilRate = 1.02 * hsgAreaA +
+                                  0.52 * hsgAreaB +
+                                  0.27 * hsgAreaC +
+                                  0.05 * hsgAreaD;
+            double weightedVariance = (Math.Pow((1.02 - avgInfilRate), 2) * hsgAreaA +
+                                        Math.Pow((0.52 - avgInfilRate), 2) * hsgAreaB +
+                                        Math.Pow((0.27 - avgInfilRate), 2) * hsgAreaC +
+                                        Math.Pow((0.05 - avgInfilRate), 2) * hsgAreaD) / totalArea;
+            double bmpDifference = -1.2886 * weightedVariance + 0.0055; // 0.0055 : from heterogeneity curves
+
+            return bmpDifference
+
+        }
+
         static private double _designStormBMP(double developArea, double rainfall)
         {
             // Assumes effective BMP depth = 1.75 ft
@@ -229,6 +407,12 @@ namespace Simulation
             // Area :: ft^2
             return (developArea * 43560 * rainfall / 12 / 1.75);
         }
+    }
+
+    class AnalysisTrace
+    {
+        public Analysis.Approaches analysisRec;
+        public String reason;
     }
 }
 

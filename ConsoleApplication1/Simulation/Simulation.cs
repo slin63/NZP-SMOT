@@ -12,10 +12,8 @@ namespace Simulation
     {
         static double DAYS_IN_YEAR = 365;
 
-        public static SimTrace AMain(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
+        public static SimModels AMain(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            SimTrace simTrace = new Simulation.SimTrace();
-
             // Initialize all watershed objects
             Modules.Watershed watershed = new Modules.Watershed
                 (input.avgHorton.infilMax, input.avgHorton.infilMin, input.avgHorton.decayRate,
@@ -33,6 +31,9 @@ namespace Simulation
 
             // Using the Excel solver add-in, determine required BMP surface areas
             _findSurfaceArea(watershed, ref bmp, medianInfo.rainfallTimeseries, timeseriesSummary);
+            double bmpCost = bmp.evaluateCost();
+
+            SimModels simTrace = new Simulation.SimModels(watershed, bmp);
 
             return simTrace;
         }
@@ -49,19 +50,59 @@ namespace Simulation
             double netBmpOverflow = __netBmpOverflow(timeseriesSummary, yearsSimulated);
             double netPervRunoff = __netPervRunoff(timeseriesSummary, yearsSimulated);
 
-        //If simMethod Then
-            //Call Simulation.RunSolver(Sheets(myWS.SWSID))
-            //myBMP.bmpArea = Sheets(myWS.SWSID).Range("$A$1").Value
-        //End If
+            double bmpArea = _solveBmpArea(netBmpOverflow, netPervRunoff, bmp);
 
-        //' Copy and paste values to remove active worksheet formuals.
-        //Set tmpRange = Sheets(myWS.SWSID).Range("$I$2")
-        //Set tmpRange = Range(tmpRange, tmpRange.End(xlDown))
-        //Set tmpRange = Range(tmpRange, tmpRange.Offset(0, 2))
-        //tmpRange.Copy
-        //tmpRange.PasteSpecial Paste:= xlPasteValues
-
+            // TODO: Assign the newly solved bmpArea to the bmp.
+            bmp.bmpArea = bmpArea;
         }
+
+        private static double _solveBmpArea(double bmpOverflow, double pRunoff, Modules.BMP bmp)
+        {
+            // TODO: Fk C
+            // C# Simplex solver: https://msdn.microsoft.com/en-us/library/ff713958(v=vs.93).aspx
+            //Dim Result As Integer
+
+            //' Ensure screen updating is turned off.
+            //Application.ScreenUpdating = False
+
+            // >>>> Modifying bmpArea to make netOverflow match pervRunoff (i think)
+            //' Set up new analysis.
+            //Application.Run "Solver.xlam!SolverOk", myWS.Range("$M$1"), 3, myWS.Range("$N$1").Value, myWS.Range("$A$1"), 1
+
+            // >>>> bmpArea >= zero
+            //' Add constraints.        ->       
+            //Application.Run "Solver.xlam!SolverAdd", myWS.Range("$A$1"), 3, 0
+
+            //' Run the analysis.
+            //Result = Application.Run("Solver.xlam!SolverSolve", True)
+
+            //' Finish the analysis.
+            //Application.Run "Solver.xlam!SolverFinish"
+
+            //Do While Result = 0
+            //    ' Reset Solver.
+            //    Application.Run "Solver.xlam!SolverReset"
+            //    ' Set up new analysis.
+            //    Application.Run "Solver.xlam!SolverOk", myWS.Range("$M$1"), 3, myWS.Range("$N$1").Value, myWS.Range("$A$1"), 1
+            //    ' Add constraints.
+
+            //    >>>> bmpArea >= zero
+            //    Application.Run "Solver.xlam!SolverAdd", myWS.Range("$A$1"), 3, 0
+
+            //    >>>> New constraint: bmpArea <= (bmpArea - 50) . . . . Seems like we're decrementing by 50 each iteration
+            //    Application.Run "Solver.xlam!SolverAdd", myWS.Range("$A$1"), 1, myWS.Range("$A$1") - 50
+            //    Result = Application.Run("Solver.xlam!SolverSolve", True)
+            //    Application.Run "Solver.xlam!SolverFinish"
+
+            //    If Result <> 0 Then
+            //    myWS.Range("$A$1") = myWS.Range("$A$1") + 100
+            //    End If
+
+            //Loop
+
+            return -9999;
+        }
+
         private static List<timeseriesTup> _calculateWaterBalance(SMOT_IO.ETInfo ETInfo, SMOT_IO.AnalysisParams medianInfo,
                                                    ref Modules.Watershed watershed, ref Modules.BMP bmp)
         {
@@ -118,13 +159,14 @@ namespace Simulation
         }
     }
 
-    class SimTrace
+    class SimModels
     {
-        // TODO
-        // Placeholder class for whatever we'll need the simulation to return later
-        public SimTrace()
+        public Modules.Watershed watershed;
+        public Modules.BMP bmp;
+        public SimModels(Modules.Watershed watershed, Modules.BMP bmp)
         {
-            throw new NotImplementedException();
+            this.watershed = watershed;
+            this.bmp = bmp;
         }
     }
 }

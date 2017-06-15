@@ -15,6 +15,11 @@ namespace Modules
         public double bmpInfilt;
         public double bmpDepth;
 
+        public double Cost = -9999;
+
+        private double _costCoefficient = 12.4;
+        private double _EConstant = 0.76;
+
         public BMP(Watershed watershed, SMOT_IO.InputParams input)
         {
             this.bmpDepth = input.effectiveBMPDepth;
@@ -25,6 +30,11 @@ namespace Modules
 
             // Calculating the BMP's infiltration rate
             this.bmpInfilt = _calculateBMPInfilt(input);
+        }
+
+        public double evaluateCost()
+        {
+            return Math.Pow(_costCoefficient * (bmpArea * bmpDepth / 12), _EConstant);
         }
 
         private double _calculateBMPInfilt(SMOT_IO.InputParams input)

@@ -6,59 +6,52 @@ using System.Threading.Tasks;
 
 namespace Preprocessing
 {
-    static class DryDays
+    static class Rainfall
     {
         // avg dry days = dryDays / dryPeriodcount
         const double dryDayThreshold = 0.0;
-        // Every instance where the precip is less than the dryDayThreshold, is a dryDay
-        // Every instance where the day before the current row's day is greater than threshold
-        //              it is considered a dry period.
-        static public double calcAverageDryDays(SMOT_IO.CSVFile dryDaySheet, ref SMOT_IO.InputParams input)
-        // The calculation in the original VBA code doesn't make much sense.
-        // This calculation is a placeholder for now. 
-        // DO NOT USE IN PRODUCTION!
+        const double rainThreshold = 0.1;
+
+        static public double calcAverageDryDays(SMOT_IO.CSVFile rainfallSheet, ref SMOT_IO.InputParams input)        
         {
+            // Every instance where the precip is less than the dryDayThreshold, is a dryDay
+            // Every instance where the day before the current row's day is greater than threshold
+            // is considered a dry period.
             double dryDayCount = 0.0;
             double dryPeriodCount = 0.0;
 
-            for (int i = 0; i < dryDaySheet.length(); i++)
+            List<double> rainPerDay = _rainPerDay(rainfallSheet, dryDayThreshold);
+
+            for (int i = 0; i < rainPerDay.Count; i++)
             {
-                // currentRow :: list<String> formatted ['Element1', 'Element2', 'etc']
-                List<String> currentRow = dryDaySheet.rows[i].row;
-                double currentRainfall = Convert.ToDouble(currentRow[1]);
-                // [1] = Rainfall depth, [0] = Date/Time
-                if (currentRainfall <= dryDayThreshold)
+                if (rainPerDay[i] <= dryDayThreshold)
                 {
                     dryDayCount += 1;
                     if (i > 0)
                     {
-                        double previousRainfall = Convert.ToDouble(dryDaySheet.rows[i - 1].row[1]);
+                        double previousRainfall = rainPerDay[i - 1];
                         if (previousRainfall > dryDayThreshold)
                             dryPeriodCount += 1;
                     }
                 }
             }
-
             double avgDryDays = dryDayCount / dryPeriodCount;
-            return -1;
+
+            return avgDryDays;
         }
-    }
-
-    static class Percentile95Rain
-    {
-        const double threshhold = 0.1;
-
+        
         static public double calc95thPercentile(SMOT_IO.CSVFile rainfallSheet, ref SMOT_IO.InputParams input)
         {
-            // The calculation in the original VBA code doesn't make much sense.
-            // This calculation is a placeholder for now. 
-            // DO NOT USE IN PRODUCTION!
-            return -1;
+            List<double> rainPerDay = _rainPerDay(rainfallSheet, rainThreshold);
+            double percentile95 = _percentile(rainPerDay, 0.95);
+
+            return percentile95;
         }
 
         // https://stackoverflow.com/questions/8137391/percentile-calculation
-        private static double _percentile(double[] sequence, double excelPercentile)
+        private static double _percentile(List<double> list, double excelPercentile)
         {
+            double[] sequence = list.ToArray();
             Array.Sort(sequence);
             int N = sequence.Length;
             double n = (N - 1) * excelPercentile + 1;
@@ -72,6 +65,32 @@ namespace Preprocessing
                 return sequence[k - 1] + d * (sequence[k] - sequence[k - 1]);
             }
         }
-    }
 
+        public static List<double> _rainPerDay(SMOT_IO.CSVFile rainfallSheet, double threshold)
+        {
+            //TODO: CHANGE FROM PUBLIC TO PRIVATE. PUBLIC JUST FOR TESTING IN MAIN.CS!!
+            int i = 0;
+            double currentTotalRain = 0;
+            List<double> rainPerDay = new List<double>();
+            foreach (SMOT_IO.CSVRow row in rainfallSheet.rows)
+            {
+                DateTime currentDate = DateTime.Parse(row.row[0]);
+
+                currentTotalRain += Double.Parse(row.row[1]);
+                i++;
+
+                if (i % 24 == 0)
+                {
+                    i = 0;
+
+                    if (currentTotalRain >= threshold)
+                        rainPerDay.Add(currentTotalRain);
+
+                    currentTotalRain = 0;
+                }
+            }
+
+            return rainPerDay;
+        }
+    }
 }

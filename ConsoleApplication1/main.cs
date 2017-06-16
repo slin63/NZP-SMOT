@@ -11,9 +11,16 @@ namespace Exec
     {
         public static void Main(string[] args)
         {
-            SMOT_IO.XMLReader reader = new SMOT_IO.XMLReader("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\SMOTInput.xml");
-            reader.ExtractInput();
 
+            //SMOT_IO.XMLReader reader = new SMOT_IO.XMLReader("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\SMOTInput.xml");
+            //reader.ExtractInput();
+            SMOT_IO.CSVFile csv = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\RainfallData.csv", true);
+            //var test = Preprocessing.Rainfall._rainPerDay(csv);
+            SMOT_IO.InputParams ip = new SMOT_IO.InputParams();
+            Preprocessing.Rainfall.calc95thPercentile(csv, ref ip);
+            Preprocessing.Rainfall.calcAverageDryDays(csv, ref ip);
+
+            Console.WriteLine("IASUAISFUASFOHSFOA");
 
         }
     }

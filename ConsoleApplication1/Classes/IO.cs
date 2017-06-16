@@ -8,7 +8,9 @@ namespace SMOT_IO
 
     class InputParams
     {
-        // TODO: Constructor to load data in via XML sheet
+        // TODO: Constructor to load data in via XML sheet'
+
+
         // Base data
         //       Defaults should read "N/A"
         public String baseLocation;
@@ -84,6 +86,14 @@ namespace SMOT_IO
         {
             return hsgAreaA + hsgAreaB + hsgAreaC + hsgAreaD;
         }
+
+        public object this[string propertyName]
+        // https://stackoverflow.com/questions/10283206/c-sharp-setting-getting-the-class-properties-by-string-name
+        {
+            get { return this.GetType().GetProperty(propertyName).GetValue(this, null); }
+            set { this.GetType().GetProperty(propertyName).SetValue(this, value, null); }
+        }
+
     }
 
     class AnalysisParams
@@ -222,13 +232,6 @@ namespace SMOT_IO
             }
         }
         
-    }
-
-
-
-
-    class XMLHolder
-    {
     }
 }
 

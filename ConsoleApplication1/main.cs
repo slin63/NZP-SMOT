@@ -11,9 +11,10 @@ namespace Exec
     {
         public static void Main(string[] args)
         {
-            List<int> iL = new List<int> { 1, 2, 3, 4, 5 };
-            Console.WriteLine(iL[iL.Count - 1]);
-            
+            SMOT_IO.XMLReader reader = new SMOT_IO.XMLReader("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\SMOTInput.xml");
+            reader.ExtractInput();
+
+
         }
     }
 

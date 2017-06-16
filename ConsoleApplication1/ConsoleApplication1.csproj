@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analysis.cs" />
+    <Compile Include="Classes\XMLReader.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Preprocessing\Rainfall.cs" />
     <Compile Include="Preprocessing\HSGAve.cs" />
@@ -59,7 +60,12 @@
     <None Include="InputFiles\RainfallData.csv" />
     <None Include="SampleInputs\RainfallData.csv" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ClientBin\NZP\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SampleInputs\SMOTInput.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

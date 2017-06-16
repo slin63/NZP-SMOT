@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ParametricModelDefinition ModelName="NZP-Sim-SMOT" Version="TODO">
+
+  -<Group Model="StormwaterOptimization" Key="StormwaterOptimization" Description="Stormwater Optimization Toolkit" Name="Stormwater Optimization Toolkit Inputs">
+    <!--Base Defaults-->
+    -<EMDefinition Key="BaseData" Description="Base data for the simulation" Name="Base Data">
+
+      <Parameter Key="BaseArea" Value="ssssssssssssss"/>
+      <Parameter Key="BaseData" Value=""/>
+
+    </EMDefinition>
+
+
+    <!--Land Defaults-->
+    -<EMDefinition Key="LandData" Description="Data describing land usage and characteristics" Name="Land Data">
+
+      <Parameter Key="landCoverPervious" Value="3233333333"/>
+      <Parameter Key="landCoverImperious" Value="0"/>
+
+      <Parameter Key="storageDepthImpervious" Value="0"/>
+      <Parameter Key="storageDepthPervious" Value="0"/>
+
+      <Parameter Key="totalImpArea" Value="0"/>
+      <Parameter Key="effectiveBMPDepth" Value="0"/>
+
+      <Parameter Key="majorOnlinePond" Value="0"/>
+
+    </EMDefinition>
+
+
+    <!--Regulatory Defaults-->
+    -<EMDefinition Key="RegulatoryData" Description="Data regarding regulations in place at the specified base" Name="Regulatory Data">
+
+      <Parameter Key="applTMDL" Value="False"/>
+      <Parameter Key="applTMDL_WQ" Value="N/A"/>
+
+      <Parameter Key="EISA438" Value="False"/>
+      <Parameter Key="EISA438_WQ" Value="N/A"/>
+
+      <Parameter Key="MS4" Value="False"/>
+      <Parameter Key="MS4_WQ" Value="N/A"/>
+
+    </EMDefinition>
+
+
+    <!--Rainfall and ET Defaults-->
+    -<EMDefinition Key="RainfallETData" Description="Data about evapotranspiration and rainfall rates" Name="Rainfall ET Data">
+
+      <Parameter Key="percentile95thRainfall" Value="0"/>
+      <Parameter Key="AverageDryDays" Value="0"/>
+
+      <Parameter Key="ETJan"           Value="0.01302"/>
+      <Parameter Key="ETFeb"           Value="0.01939"/>
+      <Parameter Key="ETMarch"         Value="0.03506"/>
+      <Parameter Key="ETApril"         Value="0.05843"/>
+      <Parameter Key="ETMay"           Value="0.09645"/>
+      <Parameter Key="ETJune"          Value="0.13232"/>
+      <Parameter Key="ETJuly"          Value="0.16747"/>
+      <Parameter Key="ETAugust"        Value="0.13444"/>
+      <Parameter Key="ETSeptember"     Value="0.07984"/>
+      <Parameter Key="ETOctober"       Value="0.03715"/>
+      <Parameter Key="ETNovember"      Value="0.01870"/>
+      <Parameter Key="ETDecember"      Value="0.01154"/>
+
+    </EMDefinition>
+
+
+    <!--Soil Defaults-->
+    <EMDefinition Key="SoilData" Description="Data about soil characteristics" Name="Soil Data">
+
+      <Parameter Key="hsgAreaA" Value="1.0"/>
+      <Parameter Key="hsgAreaB" Value="0"/>
+      <Parameter Key="hsgAreaC" Value="0"/>
+      <Parameter Key="hsgAreaD" Value="0"/>
+
+      <Parameter Key="hsgAInfilMax" Value="6"/>
+      <Parameter Key="hsgAInfilMin" Value=".5"/>
+      <Parameter Key="hsgADryDays" Value="7.0"/>
+      <Parameter Key="hsgADecayRate" Value="2.0"/>
+
+      <Parameter Key="hsgBInfilMax" Value="5.0"/>
+      <Parameter Key="hsgBInfilMin" Value="0.3"/>
+      <Parameter Key="hsgBDryDays" Value="7.0"/>
+      <Parameter Key="hsgBDecayRate" Value="3.0"/>
+
+      <Parameter Key="hsgCInfilMax" Value="3.0"/>
+      <Parameter Key="hsgCInfilMin" Value="0.1"/>
+      <Parameter Key="hsgCDryDays" Value="7.0"/>
+      <Parameter Key="hsgCDecayRate" Value="3.0"/>
+
+      <Parameter Key="hsgDInfilMax" Value="1.0"/>
+      <Parameter Key="hsgDInfilMin" Value="0.0"/>
+      <Parameter Key="hsgDDryDays" Value="7.0"/>
+      <Parameter Key="hsgDDecayRate" Value="3.0"/>
+
+    </EMDefinition>
+
+  </Group>
+
+</ParametricModelDefinition>

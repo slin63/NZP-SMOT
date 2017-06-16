@@ -395,7 +395,7 @@ namespace Simulation
                                         Math.Pow((0.05 - avgInfilRate), 2) * hsgAreaD) / totalArea;
             double bmpDifference = -1.2886 * weightedVariance + 0.0055; // 0.0055 : from heterogeneity curves
 
-            return bmpDifference
+            return bmpDifference;
 
         }
 

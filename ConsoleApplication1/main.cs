@@ -11,31 +11,41 @@ namespace Exec
     {
         public static void Main(string[] args)
         {
-
             //SMOT_IO.XMLReader reader = new SMOT_IO.XMLReader("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\SMOTInput.xml");
             //reader.ExtractInput();
+            //SMOT_IO.CSVFile csv = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\RainfallData.csv", true);
+            ////var test = Preprocessing.Rainfall._rainPerDay(csv);
+            //SMOT_IO.InputParams ip = new SMOT_IO.InputParams();
+            //Preprocessing.Rainfall.calc95thPercentile(csv, ref ip);
+            //Preprocessing.Rainfall.calcAverageDryDays(csv, ref ip);
+
+            //ModelExecutor modelManager = new ModelExecutor(ip);
+
             SMOT_IO.CSVFile csv = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\RainfallData.csv", true);
-            //var test = Preprocessing.Rainfall._rainPerDay(csv);
-            SMOT_IO.InputParams ip = new SMOT_IO.InputParams();
-            Preprocessing.Rainfall.calc95thPercentile(csv, ref ip);
-            Preprocessing.Rainfall.calcAverageDryDays(csv, ref ip);
+            TestModels.SampleInputParams testIn = new TestModels.SampleInputParams();
 
-            Console.WriteLine("IASUAISFUASFOHSFOA");
-
+            ModelExecutor modelManager = new ModelExecutor(testIn.input, csv);
+            modelManager.RunModel();
         }
     }
 
-    class ModelManager
+    class ModelExecutor
     {
-        // TODO:
-        //       Get rainfall algorithms working.
-        //       Attach rainfall CSV to AnalysisParams object.
         SMOT_IO.InputParams input;
+        SMOT_IO.CSVFile rainfallTimeseries;
         SMOT_IO.AnalysisParams medianInfo;
 
-        public ModelManager(SMOT_IO.InputParams input)
+        Simulation.AnalysisTrace outputInfo;
+
+        public ModelExecutor(SMOT_IO.InputParams input, SMOT_IO.CSVFile rainfallTimeseries)
         {
             this.input = input;
+            this.rainfallTimeseries = rainfallTimeseries;
+        }
+
+        public void PresentOutput()
+        {
+            Console.WriteLine("REC: {0}\nREASON: {1}", outputInfo.analysisRec, outputInfo.reason);
         }
 
         public void RunModel()
@@ -44,15 +54,31 @@ namespace Exec
             {
                 // Calculate the last bit of soil info needed
                 this.medianInfo = _initAnalysisParams();
+                this.medianInfo.rainfallTimeseries = rainfallTimeseries;
+
+                _applyPreprocessing();
 
                 // Begin analysis process
-                this._analysis();
+                this.outputInfo = this._analysis();
+            }
+            else
+            {
+                throw new ArgumentException("Invalid inputs!");
             }
         }
 
-        private void _analysis()
+        private void _applyPreprocessing()
         {
-            Simulation.Analysis.RunAnalysis(this.input, this.medianInfo);
+            Preprocessing.HSGPreprocessing.averageHSGInfo(ref this.input);
+            this.input.averageDryDays = Preprocessing.Rainfall.calcAverageDryDays
+                                            (this.medianInfo.rainfallTimeseries, this.input);
+            this.input.percentile95Rainfall = Preprocessing.Rainfall.calcAverageDryDays
+                                            (this.medianInfo.rainfallTimeseries, this.input);
+        }
+
+        private Simulation.AnalysisTrace _analysis()
+        {
+           return Simulation.Analysis.RunAnalysis(this.input, this.medianInfo);
         }
 
         private SMOT_IO.AnalysisParams _initAnalysisParams()

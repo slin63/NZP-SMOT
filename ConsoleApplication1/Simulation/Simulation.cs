@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.SolverFoundation.Common;
+using Microsoft.SolverFoundation.Solvers;
+
+
 
 namespace Simulation
 {
@@ -52,7 +56,6 @@ namespace Simulation
 
             double bmpArea = _solveBmpArea(netBmpOverflow, netPervRunoff, bmp);
 
-            // TODO: Assign the newly solved bmpArea to the bmp.
             bmp.bmpArea = bmpArea;
         }
 
@@ -64,6 +67,9 @@ namespace Simulation
 
             //' Ensure screen updating is turned off.
             //Application.ScreenUpdating = False
+
+            SimplexSolver solver = new SimplexSolver();
+
 
             // >>>> Modifying bmpArea to make netOverflow match pervRunoff (i think)
             //' Set up new analysis.

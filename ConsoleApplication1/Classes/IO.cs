@@ -50,7 +50,7 @@ namespace SMOT_IO
         // Evaporation data
         public double avgInchPerDay; // Listed as "record type", monthly estimate for average daily depth
 
-        public ETInfo ETInfo;
+        public ETInfo ETInfo = new ETInfo();
 
         // Hydrologic soil group data, sums up to 1.0
         public double hsgAreaA;
@@ -64,15 +64,15 @@ namespace SMOT_IO
         public HSGInfo hsgC;
         public HSGInfo hsgD;
 
-        public HSGInfo avgHorton;
+        public HSGInfo avgHorton = new HSGInfo();
 
-        public Dictionary<string, RangeInt> hortonRegionDrying = new Dictionary<string, RangeInt>()
-        {
-            { "arid", new RangeInt (1, 2) },
-            { "semi-arid", new RangeInt (2, 4) },
-            { "mid_east_southeast_US", new RangeInt (3, 8) },
-            { "humid_or_prolonged_precip", new RangeInt (7, 14) }
-        };
+        //public Dictionary<string, RangeInt> hortonRegionDrying = new Dictionary<string, RangeInt>()
+        //{
+        //    { "arid", new RangeInt (1, 2) },
+        //    { "semi-arid", new RangeInt (2, 4) },
+        //    { "mid_east_southeast_US", new RangeInt (3, 8) },
+        //    { "humid_or_prolonged_precip", new RangeInt (7, 14) }
+        //};
         
         public void setAVGHSGInfo(double infilMax, double infilMin, double dryDays, double decayRate)
         {
@@ -86,14 +86,6 @@ namespace SMOT_IO
         {
             return hsgAreaA + hsgAreaB + hsgAreaC + hsgAreaD;
         }
-
-        public object this[string propertyName]
-        // https://stackoverflow.com/questions/10283206/c-sharp-setting-getting-the-class-properties-by-string-name
-        {
-            get { return this.GetType().GetProperty(propertyName).GetValue(this, null); }
-            set { this.GetType().GetProperty(propertyName).SetValue(this, value, null); }
-        }
-
     }
 
     class AnalysisParams
@@ -193,11 +185,11 @@ namespace SMOT_IO
         public double ETMay;
         public double ETJune;
         public double ETJuly;
-        public double ETAugust;
-        public double ETSeptember;
-        public double ETOctober;
-        public double ETNovember;
-        public double ETDecember;
+        public double ETAug;
+        public double ETSep;
+        public double ETOct;
+        public double ETNov;
+        public double ETDec;
 
         public double getMonthlyET(int monthInt)
         {
@@ -218,15 +210,15 @@ namespace SMOT_IO
                 case 7:
                     return ETJuly;
                 case 8:
-                    return ETAugust;
+                    return ETAug;
                 case 9:
-                    return ETSeptember;
+                    return ETSep;
                 case 10:
-                    return ETOctober;
+                    return ETOct;
                 case 11:
-                    return ETNovember;
+                    return ETNov;
                 case 12:
-                    return ETDecember;
+                    return ETDec;
                 default:
                     throw new IndexOutOfRangeException("Attempted to access ET values for a month with invalid integer value: " + monthInt);
             }

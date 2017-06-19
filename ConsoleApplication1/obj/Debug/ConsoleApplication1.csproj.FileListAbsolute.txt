@@ -4,3 +4,5 @@ c:\users\rdcersl9\documents\visual studio 2015\Projects\ConsoleApplication1\Cons
 c:\users\rdcersl9\documents\visual studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
 c:\users\rdcersl9\documents\visual studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
 C:\Users\RDCERSL9\Documents\Visual Studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csprojResolveAssemblyReference.cache
+C:\Users\RDCERSL9\Documents\Visual Studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\bin\Debug\Microsoft.Solver.Foundation.dll
+C:\Users\RDCERSL9\Documents\Visual Studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\bin\Debug\Microsoft.Solver.Foundation.xml

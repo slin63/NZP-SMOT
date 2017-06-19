@@ -12,7 +12,7 @@ namespace Preprocessing
         const double dryDayThreshold = 0.0;
         const double rainThreshold = 0.1;
 
-        static public double calcAverageDryDays(SMOT_IO.CSVFile rainfallSheet, ref SMOT_IO.InputParams input)        
+        static public double calcAverageDryDays(SMOT_IO.CSVFile rainfallSheet, SMOT_IO.InputParams input)        
         {
             // Every instance where the precip is less than the dryDayThreshold, is a dryDay
             // Every instance where the day before the current row's day is greater than threshold
@@ -40,7 +40,7 @@ namespace Preprocessing
             return avgDryDays;
         }
         
-        static public double calc95thPercentile(SMOT_IO.CSVFile rainfallSheet, ref SMOT_IO.InputParams input)
+        static public double calc95thPercentile(SMOT_IO.CSVFile rainfallSheet, SMOT_IO.InputParams input)
         {
             List<double> rainPerDay = _rainPerDay(rainfallSheet, rainThreshold);
             double percentile95 = _percentile(rainPerDay, 0.95);
@@ -68,7 +68,6 @@ namespace Preprocessing
 
         private static List<double> _rainPerDay(SMOT_IO.CSVFile rainfallSheet, double threshold)
         {
-            //TODO: CHANGE FROM PUBLIC TO PRIVATE. PUBLIC JUST FOR TESTING IN MAIN.CS!!
             int i = 0;
             double currentTotalRain = 0;
             List<double> rainPerDay = new List<double>();

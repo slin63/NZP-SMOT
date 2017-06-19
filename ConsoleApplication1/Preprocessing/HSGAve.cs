@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Preprocessing
 {
-    static class HSGParser
+    static class HSGPreprocessing
     {
         static public void averageHSGInfo(ref SMOT_IO.InputParams input)
         {

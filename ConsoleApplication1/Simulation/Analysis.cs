@@ -5,15 +5,11 @@ namespace Simulation
 {
     static class Analysis
     {
-        // TODO: We might need to pass input and medianInfo refs.
-        //       That depends on if this is the final function that'll be using those datasets
         private static String _blankField = "N/A";
         public enum Approaches { DesignStorm, ContinuousOnly, ContinuousWithOptimization };
 
         public static AnalysisTrace RunAnalysis(SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            // TODO :: 
-            // Currently void, but should return a detailed trace with analysis results.
             bool heterogeneity = _heteroAnalysis(medianInfo);
             AnalysisTrace aTrace = new AnalysisTrace();
 

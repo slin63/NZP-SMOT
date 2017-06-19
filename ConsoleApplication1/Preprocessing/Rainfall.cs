@@ -66,7 +66,7 @@ namespace Preprocessing
             }
         }
 
-        public static List<double> _rainPerDay(SMOT_IO.CSVFile rainfallSheet, double threshold)
+        private static List<double> _rainPerDay(SMOT_IO.CSVFile rainfallSheet, double threshold)
         {
             //TODO: CHANGE FROM PUBLIC TO PRIVATE. PUBLIC JUST FOR TESTING IN MAIN.CS!!
             int i = 0;

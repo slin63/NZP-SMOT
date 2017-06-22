@@ -68,7 +68,11 @@ namespace Simulation
             //' Ensure screen updating is turned off.
             //Application.ScreenUpdating = False
 
-            SimplexSolver solver = new SimplexSolver();
+            //SimplexSolver solver = new SimplexSolver();
+            //double bmpArea = bmp.bmpArea;
+            //solver.AddVariable("bmpArea", out bmpArea);
+
+
 
 
             // >>>> Modifying bmpArea to make netOverflow match pervRunoff (i think)

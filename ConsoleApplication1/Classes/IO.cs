@@ -168,12 +168,17 @@ namespace SMOT_IO
         }
     }
 
-    struct HSGInfo // Struct to hold data for HSG soils.
+    class HSGInfo // Struct to hold data for HSG soils.
     {
         public double infilMax;  // in/hr
         public double infilMin;  // in/hr
         public double dryDays;   // 1 - 14
         public double decayRate; // (per hour (weird unit??))
+
+        public bool AnyNegative()
+        {
+            return (infilMax < 0 || infilMin < 0 || dryDays < 0 || decayRate < 0);
+        }
     }
 
     class ETInfo
@@ -193,35 +198,53 @@ namespace SMOT_IO
 
         public double getMonthlyET(int monthInt)
         {
+            double monthlyET;
             switch (monthInt)
             {
                 case 1:
-                    return ETJan;
+                    monthlyET = ETJan;
+                    break;
                 case 2:
-                    return ETFeb;
+                    monthlyET = ETFeb;
+                    break;
                 case 3:
-                    return ETMarch;
+                    monthlyET = ETMarch;
+                    break;
                 case 4:
-                    return ETApril;
+                    monthlyET = ETApril;
+                    break;
                 case 5:
-                    return ETMay;
+                    monthlyET = ETMay;
+                    break;
                 case 6:
-                    return ETJune;
+                    monthlyET = ETJune;
+                    break;
                 case 7:
-                    return ETJuly;
+                    monthlyET = ETJuly;
+                    break;
                 case 8:
-                    return ETAug;
+                    monthlyET = ETAug;
+                    break;
                 case 9:
-                    return ETSep;
+                    monthlyET = ETSep;
+                    break;
                 case 10:
-                    return ETOct;
+                    monthlyET = ETOct;
+                    break;
                 case 11:
-                    return ETNov;
+                    monthlyET = ETNov;
+                    break;
                 case 12:
-                    return ETDec;
+                    monthlyET = ETDec;
+                    break;
                 default:
                     throw new IndexOutOfRangeException("Attempted to access ET values for a month with invalid integer value: " + monthInt);
             }
+
+            if (monthlyET < 0)
+                throw new ArgumentException(String.Format("User supplied invalid Monthly ET info: {0}", monthlyET));
+
+            return monthlyET;
         }
         
     }

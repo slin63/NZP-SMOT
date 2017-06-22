@@ -26,6 +26,7 @@ namespace Exec
 
             ModelExecutor modelManager = new ModelExecutor(testIn.input, csv);
             modelManager.RunModel();
+            modelManager.PresentOutput();
         }
     }
 
@@ -50,14 +51,13 @@ namespace Exec
 
         public void RunModel()
         {
-            if (_checkValidation()) // If all inputs are good
-            {
-                // Calculate the last bit of soil info needed
-                this.medianInfo = _initAnalysisParams();
-                this.medianInfo.rainfallTimeseries = rainfallTimeseries;
+            // Calculate the last bit of soil info needed
+            this.medianInfo = _initAnalysisParams();
+            this.medianInfo.rainfallTimeseries = rainfallTimeseries;
+            _applyPreprocessing();
 
-                _applyPreprocessing();
-
+            if (_checkValidation()) // If all inputs are good 
+            {         
                 // Begin analysis process
                 this.outputInfo = this._analysis();
             }
@@ -74,6 +74,7 @@ namespace Exec
                                             (this.medianInfo.rainfallTimeseries, this.input);
             this.input.percentile95Rainfall = Preprocessing.Rainfall.calcAverageDryDays
                                             (this.medianInfo.rainfallTimeseries, this.input);
+
         }
 
         private Simulation.AnalysisTrace _analysis()

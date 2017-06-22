@@ -28,7 +28,7 @@ namespace Validation
             _sortVals(traces, passed, failed);
 
             // Merge error messages from failed traces into one single trace.
-            ValidationTrace failLog =_mergeTraces(failed);
+            ValidationTrace failLog = _mergeTraces(failed);
 
             // Check if all four of our traces passed.
             bool validated = _checkAllPassed(passed);
@@ -206,8 +206,14 @@ namespace Validation
 
             if (_checkSoilPercent(input) == false)
             {
-                trace.SetTraceInfo(false, "Invalid HSG soil areas. Please make sure they are in decimal format and greater than zero.");
+                trace.SetTraceInfo(false, "Invalid HSG soil areas. Please make sure they are in decimal format, greater than zero, and less than one.");
             }
+
+            else if (input.hsgA.AnyNegative() || input.hsgB.AnyNegative() || input.hsgC.AnyNegative() || input.hsgD.AnyNegative())
+            {
+                trace.SetTraceInfo(false, "Invalid HSG infiltration, dry days, or decay rates supplied.");
+            }
+
             else
             {
                 trace.SetTraceInfo(true, "Soil values are valid.");
@@ -221,9 +227,9 @@ namespace Validation
             if ((input.hsgAreaA >= 0) && (input.hsgAreaB >= 0) && (input.hsgAreaC >= 0) && (input.hsgAreaD >= 0))
             {
                 if (input.hsgAreaA + input.hsgAreaB + input.hsgAreaC + input.hsgAreaD == 0)
-                {
                     return false;
-                }
+                else if (input.hsgAreaA + input.hsgAreaB + input.hsgAreaC + input.hsgAreaD > 1)
+                    return false;
                 else
                     return true;
             }

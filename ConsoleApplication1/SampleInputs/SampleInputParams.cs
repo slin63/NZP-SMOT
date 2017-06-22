@@ -28,8 +28,8 @@ namespace TestModels
             input.applTMDL_WQ = "N/A";
             input.MS4 = false;
             input.MS4_WQ = "N/A";
-            input.percentile95Rainfall = 2.59;
-            input.averageDryDays = 4.70;
+            //input.percentile95Rainfall = 2.59;
+            //input.averageDryDays = 4.70;
 
             input.ETInfo.ETJan = .01302;
             input.ETInfo.ETFeb = 0.01939;
@@ -49,7 +49,12 @@ namespace TestModels
             input.hsgAreaC  = 0;
             input.hsgAreaD = 0;
 
-            input.hsgA.infilMax = 6.0;
+            input.hsgA = new SMOT_IO.HSGInfo();
+            input.hsgB = new SMOT_IO.HSGInfo();
+            input.hsgC = new SMOT_IO.HSGInfo();
+            input.hsgD = new SMOT_IO.HSGInfo();
+
+            input.hsgA.infilMax = -6.0;
             input.hsgA.infilMin = .5;
             input.hsgA.dryDays = 7.0;
             input.hsgA.decayRate = 2.0;

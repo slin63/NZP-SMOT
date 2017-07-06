@@ -247,7 +247,7 @@ namespace Validation
 
         static private bool _checkWatershedAreaInfo(SMOT_IO.InputParams input)
         {
-            if (input.storageDepthImpervious <= 0 || input.storageDepthPervious <= 0 || input.totalImpArea <= 0)
+            if (input.storageDepthImpervious <= 0 || input.storageDepthPervious <= 0 || input.totalDevelImpArea <= 0)
                 return false;
             else
                 return true;

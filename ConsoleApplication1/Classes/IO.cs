@@ -23,7 +23,7 @@ namespace SMOT_IO
         public double storageDepthImpervious; // Inches (recommended 0.05")
         public double storageDepthPervious;   // Inches (recommended 0.15") 
 
-        public double totalImpArea; // Total impervious area within AOI proposed for new/redevelopment 
+        public double totalDevelImpArea; // Total impervious area within AOI proposed for new/redevelopment 
         public double effectiveBMPDepth; // Inches; Total effective storage depth of proposed BMP 
                                          // (ponding depth + [media depth * media porosity] + [gravel depth * gravel porosity]) 
                                          // Recommended 21"
@@ -98,7 +98,7 @@ namespace SMOT_IO
         
         public double initAbsResult;
 
-        public CSVFile rainfallTimeseries;
+        public CSVFile rainfallCSV;
 
         public double designStormBMP;
         public double CSBMPArea;    // Surface area of BMP found through ContinuousSim._findSurfaceArea()
@@ -247,6 +247,29 @@ namespace SMOT_IO
             return monthlyET;
         }
         
+    }
+
+    class Timeseries
+    {
+        public DateTime date;
+        public double rainfall;
+        public double ET;
+        public double storeImp;
+        public double storePerv;
+        public double runoffImp;
+        public double runoffPerv;
+
+        public Timeseries(DateTime date, double rainfall, double ET, double storeImp, double storePerv, double runoffPerv,
+                          double runoffImp)
+        {
+            this.date = date;
+            this.rainfall = rainfall;
+            this.ET = ET;
+            this.storeImp = storeImp;
+            this.storePerv = storePerv;
+            this.runoffImp = runoffImp;
+            this.runoffPerv = runoffPerv;
+        }
     }
 }
 

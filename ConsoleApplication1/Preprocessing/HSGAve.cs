@@ -26,7 +26,7 @@ namespace Preprocessing
             double lineC = (input.hsgC.infilMax * input.hsgAreaC);
             double lineD = (input.hsgD.infilMax * input.hsgAreaD);
 
-            return (lineA + lineB + lineC + lineD) / input.totalImpArea;
+            return (lineA + lineB + lineC + lineD) / input.totalDevelImpArea;
         }
 
         static private double _calcAvgInfilMin(SMOT_IO.InputParams input)
@@ -36,7 +36,7 @@ namespace Preprocessing
             double lineC = (input.hsgC.infilMin * input.hsgAreaC);
             double lineD = (input.hsgD.infilMin * input.hsgAreaD);
 
-            return (lineA + lineB + lineC + lineD) / input.totalImpArea;
+            return (lineA + lineB + lineC + lineD) / input.totalDevelImpArea;
         }
 
         static private double _calcAvgDryDays(SMOT_IO.InputParams input)
@@ -46,7 +46,7 @@ namespace Preprocessing
             double lineC = (input.hsgC.dryDays * input.hsgAreaC);
             double lineD = (input.hsgD.dryDays * input.hsgAreaD);
 
-            return (lineA + lineB + lineC + lineD) / input.totalImpArea;
+            return (lineA + lineB + lineC + lineD) / input.totalDevelImpArea;
         }
 
         static private double _calcAvgHortonDecay(SMOT_IO.InputParams input)
@@ -57,7 +57,7 @@ namespace Preprocessing
             double lineC = (input.hsgC.decayRate * input.hsgAreaC);
             double lineD = (input.hsgD.decayRate * input.hsgAreaD);
 
-            return (lineA + lineB + lineC + lineD) / input.totalImpArea;
+            return (lineA + lineB + lineC + lineD) / input.totalDevelImpArea;
         }
     }
 }

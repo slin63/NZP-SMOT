@@ -53,7 +53,7 @@ namespace Exec
         {
             // Calculate the last bit of soil info needed
             this.medianInfo = _initAnalysisParams();
-            this.medianInfo.rainfallTimeseries = rainfallTimeseries;
+            this.medianInfo.rainfallCSV = rainfallTimeseries;
             _applyPreprocessing();
 
             if (_checkValidation()) // If all inputs are good 
@@ -71,9 +71,9 @@ namespace Exec
         {
             Preprocessing.HSGPreprocessing.averageHSGInfo(ref this.input);
             this.input.averageDryDays = Preprocessing.Rainfall.calcAverageDryDays
-                                            (this.medianInfo.rainfallTimeseries, this.input);
+                                            (this.medianInfo.rainfallCSV, this.input);
             this.input.percentile95Rainfall = Preprocessing.Rainfall.calcAverageDryDays
-                                            (this.medianInfo.rainfallTimeseries, this.input);
+                                            (this.medianInfo.rainfallCSV, this.input);
 
         }
 

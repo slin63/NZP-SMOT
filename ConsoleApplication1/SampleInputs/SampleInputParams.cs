@@ -20,7 +20,7 @@ namespace TestModels
             input.landCoverImpervious = 20;
             input.storageDepthImpervious = 0.05;
             input.storageDepthPervious = 0.15;
-            input.totalImpArea = 1;
+            input.totalDevelImpArea = 1;
             input.effectiveBMPDepth = 27;
             input.EISA438 = true;
             input.EISA438_WQ = "N/A";
@@ -54,7 +54,7 @@ namespace TestModels
             input.hsgC = new SMOT_IO.HSGInfo();
             input.hsgD = new SMOT_IO.HSGInfo();
 
-            input.hsgA.infilMax = -6.0;
+            input.hsgA.infilMax = 6.0;
             input.hsgA.infilMin = .5;
             input.hsgA.dryDays = 7.0;
             input.hsgA.decayRate = 2.0;

@@ -120,11 +120,17 @@ namespace Modules
                     q0 = (fmin * t_step) + (f0 - fmin) / k;
                     q1 = q0 + fmin * dt;
                 }
-                // Correct for max infiltration rate, if set
                 else
                 {
                     q0 = (fmin * t_step) + (f0 - fmin) / k * (1.0 - Math.Exp(-k * t_step));
                     q1 = (fmin * (t_step + dt)) + (f0 - fmin) / k * (1.0 - Math.Exp(-k * (t_step + dt)) );
+                }
+                
+                // Correct for max infiltration rate, if set
+                if (fmax > 0.0)
+                {
+                    q0 = Math.Min(fmax, q0);
+                    q1 = Math.Min(fmax, q1);
                 }
 
                 // Make sure we dont infiltrate more water than we actually have
@@ -207,7 +213,8 @@ namespace Modules
             // Assign infiltration parameters
             this.hInf.t_step = 0;
             this.hInf.f0 = f0 / 12.0 / 3600.0;
-            this.hInf.fmin = f0 / 12.0 / 3600.0;
+            this.hInf.fmin = fmin / 12.0 / 3600.0;
+            this.hInf.k = k / 3600;
 
             // Initialize maximum depression storage
             this.perDstor = this.perMaxDepth;
@@ -229,7 +236,7 @@ namespace Modules
         public double CalculateImperviousRunoff(double RainfallDepth, double ET)
         {
             // Calculates imperv depression storage less ET if dry timestep. (sic)
-            this.impDstor = Math.Min(this.impMaxDepth, this.impDstor + (ET / 24.0));
+            this.impDstor = Math.Min(this.impMaxDepth, this.impDstor + (ET));
 
             // Calculate runoff for imperv and perv conditions
             double ImpRunoff = Math.Max(0, RainfallDepth - this.impDstor - this.impInfilt);
@@ -243,16 +250,20 @@ namespace Modules
         public double CalculatePerviousRunoff(double RainfallDepth, double ET)
         {
             double infilt;
+            //if (RainfallDepth > 4.810 && RainfallDepth < 4.82 && ET > 0.004 && ET < 0.0041)
+            //{
+            //    Console.WriteLine("whoops");
+            //}
 
             // Remove ET from net rainfall for consistency with SWMM.
             RainfallDepth = Math.Max(0, RainfallDepth);
 
             // Convert rainfall rate to infiltraiton timestep.
-            RainfallDepth = RainfallDepth / 3600.0 / this.hInf.dt;
+            RainfallDepth = RainfallDepth / (3600.0 / this.hInf.dt);
 
             // Calculate infiltration rate at current timestep using the Horton infiltration method.
             double perRunoff = 0;
-            for (int i = 0; i <= (int)(3600.0 / this.hInf.dt); i = i + 1)
+            for (int i = 1; i <= (int)(3600.0 / this.hInf.dt); i = i + 1) // Starts at one for some reason
             {
                 // Calculate current Horton infiltration rate.
                 // Convert to feet/sec from in/timestep.
@@ -264,9 +275,7 @@ namespace Modules
 
                 // Calculate runoff for pervious condition.
                 perRunoff += Math.Max(0, RainfallDepth - this.perDstor - infilt);
-
-
-
+           
                 // Update pervious depression storage.
                 // Me.pDstor = WorksheetFunction.Max(0, WorksheetFunction.Min(Me.pMaxDepth, Me.pDstor + (infilt - RainfallDepth) + ET / 24))
                 // Modify ET for fine step

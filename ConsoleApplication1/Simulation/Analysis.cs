@@ -69,7 +69,7 @@ namespace Simulation
         {
             // DONE
             // Lines 410 - 456
-            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            medianInfo.designStormBMP = _designStormBMP(input.totalDevelImpArea, input.percentile95Rainfall);
             SimModels simTrace = _callSimulation(input, medianInfo);
 
             medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
@@ -103,7 +103,7 @@ namespace Simulation
 
         private static AnalysisTrace _designForMS4Permit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            medianInfo.designStormBMP = _designStormBMP(input.totalDevelImpArea, input.percentile95Rainfall);
             SimModels simTrace = _callSimulation(input, medianInfo);
 
             medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
@@ -128,7 +128,7 @@ namespace Simulation
 
         private static AnalysisTrace _designForTMDLPermit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            medianInfo.designStormBMP = _designStormBMP(input.totalDevelImpArea, input.percentile95Rainfall);
             SimModels simTrace = _callSimulation(input, medianInfo);
 
             medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
@@ -153,7 +153,7 @@ namespace Simulation
 
         private static AnalysisTrace _designForTMDLMS4Permit(ref AnalysisTrace aTrace, SMOT_IO.InputParams input, SMOT_IO.AnalysisParams medianInfo)
         {
-            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            medianInfo.designStormBMP = _designStormBMP(input.totalDevelImpArea, input.percentile95Rainfall);
             SimModels simTrace = _callSimulation(input, medianInfo);
 
             medianInfo.CSBMPArea = simTrace.bmp.bmpArea;
@@ -248,7 +248,7 @@ namespace Simulation
         {
             // None of the pond functions actually use this data. 
             // This function may just get scrapped.
-            medianInfo.designStormBMP = _designStormBMP(input.totalImpArea, input.percentile95Rainfall);
+            medianInfo.designStormBMP = _designStormBMP(input.totalDevelImpArea, input.percentile95Rainfall);
             SimModels simTrace = _callSimulation(input, medianInfo);
 
             medianInfo.CSBMPArea = simTrace.bmp.bmpArea;

@@ -74,7 +74,6 @@ namespace Exec
                                             (this.medianInfo.rainfallCSV, this.input);
             this.input.percentile95Rainfall = Preprocessing.Rainfall.calcAverageDryDays
                                             (this.medianInfo.rainfallCSV, this.input);
-
         }
 
         private Simulation.AnalysisTrace _analysis()

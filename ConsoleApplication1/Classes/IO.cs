@@ -9,8 +9,7 @@ namespace SMOT_IO
     class InputParams
     {
         // TODO: Constructor to load data in via XML sheet'
-
-
+        #region Internals
         // Base data
         //       Defaults should read "N/A"
         public String baseLocation;
@@ -73,7 +72,7 @@ namespace SMOT_IO
         //    { "mid_east_southeast_US", new RangeInt (3, 8) },
         //    { "humid_or_prolonged_precip", new RangeInt (7, 14) }
         //};
-        
+
         public void setAVGHSGInfo(double infilMax, double infilMin, double dryDays, double decayRate)
         {
             this.avgHorton.infilMax = infilMax;
@@ -86,8 +85,85 @@ namespace SMOT_IO
         {
             return hsgAreaA + hsgAreaB + hsgAreaC + hsgAreaD;
         }
+        #endregion
+
+        #region Constructors
+        public InputParams() { ; }
+
+        public InputParams(string[] args)
+        {
+            // Sample call
+            // C:\Users\RDCERSL9\Documents\Visual Studio 2015\Projects\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe 1 1 1 1 1 1 false EW false AT false M4 1 2 3 4 5 6 7 8 9 10 11 12 1.0 0 0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4
+            baseLocation = "LOCATION";
+            baseName = "BASENAME";
+            landCoverPervious      = Convert.ToDouble(args[0]);                                
+            landCoverImpervious    = Convert.ToDouble(args[1]);
+            storageDepthImpervious = Convert.ToDouble(args[2]);
+            storageDepthPervious   = Convert.ToDouble(args[3]);
+            totalDevelImpArea      = Convert.ToDouble(args[4]);
+            effectiveBMPDepth      = Convert.ToDouble(args[5]);
+            EISA438                = Convert.ToBoolean(args[6]);
+            EISA438_WQ             = (args[7]);
+            applTMDL               = Convert.ToBoolean(args[8]);
+            applTMDL_WQ            = (args[9]);
+            MS4                    = Convert.ToBoolean(args[10]);
+            MS4_WQ                 = (args[11]);
+                                     
+            ETInfo.ETJan           = Convert.ToDouble(args[12]);
+            ETInfo.ETFeb           = Convert.ToDouble(args[13]);
+            ETInfo.ETMarch         = Convert.ToDouble(args[14]);
+            ETInfo.ETApril         = Convert.ToDouble(args[15]);
+            ETInfo.ETMay           = Convert.ToDouble(args[16]);
+            ETInfo.ETJune          = Convert.ToDouble(args[17]);
+            ETInfo.ETJuly          = Convert.ToDouble(args[18]);
+            ETInfo.ETAug           = Convert.ToDouble(args[19]);
+            ETInfo.ETSep           = Convert.ToDouble(args[20]);
+            ETInfo.ETOct           = Convert.ToDouble(args[21]);
+            ETInfo.ETNov           = Convert.ToDouble(args[22]);
+            ETInfo.ETDec           = Convert.ToDouble(args[23]);
+
+            hsgAreaA               = Convert.ToDouble(args[24]);
+            hsgAreaB               = Convert.ToDouble(args[25]);
+            hsgAreaC               = Convert.ToDouble(args[26]);
+            hsgAreaD               = Convert.ToDouble(args[27]);
+
+            hsgA = new SMOT_IO.HSGInfo();
+            hsgB = new SMOT_IO.HSGInfo();
+            hsgC = new SMOT_IO.HSGInfo();
+            hsgD = new SMOT_IO.HSGInfo();
+
+            hsgA.infilMax          = Convert.ToDouble(args[28]);
+            hsgA.infilMin          = Convert.ToDouble(args[29]);
+            hsgA.dryDays           = Convert.ToDouble(args[30]);
+            hsgA.decayRate         = Convert.ToDouble(args[31]);
+            
+            hsgB.infilMax          = Convert.ToDouble(args[32]);
+            hsgB.infilMin          = Convert.ToDouble(args[33]);
+            hsgB.dryDays           = Convert.ToDouble(args[34]);
+            hsgB.decayRate         = Convert.ToDouble(args[35]);
+                                                           
+            hsgC.infilMax          = Convert.ToDouble(args[36]);
+            hsgC.infilMin          = Convert.ToDouble(args[37]);
+            hsgC.dryDays           = Convert.ToDouble(args[38]);
+            hsgC.decayRate         = Convert.ToDouble(args[39]);
+                                                           
+            hsgD.infilMax          = Convert.ToDouble(args[40]);
+            hsgD.infilMin          = Convert.ToDouble(args[41]);
+            hsgD.dryDays           = Convert.ToDouble(args[42]);
+            hsgD.decayRate         = Convert.ToDouble(args[43]);
+            _debugArgs(args);
+        }
+        #endregion  
+
+        private void _debugArgs(string[] args)
+        {
+            foreach (var ele in args)
+                Console.WriteLine(ele);
+        }
+
     }
 
+    #region Assistant Data Classes
     class AnalysisParams
     {
         public double totalSoilArea;
@@ -115,7 +191,7 @@ namespace SMOT_IO
             this.initAbsResult = ((hsgAreaA * 2.08) + (hsgAreaB * 0.9) + (hsgAreaC * 0.53) + (hsgAreaD * 0.38)) / totalSoilArea;
         }
     }
-    
+
     // https://stackoverflow.com/questions/5282999/reading-csv-file-and-storing-values-into-an-array
     class CSVFile
     {
@@ -271,5 +347,6 @@ namespace SMOT_IO
             this.runoffPerv = runoffPerv;
         }
     }
+    #endregion
 }
 

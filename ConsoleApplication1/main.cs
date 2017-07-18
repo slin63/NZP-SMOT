@@ -22,11 +22,12 @@ namespace Exec
             //ModelExecutor modelManager = new ModelExecutor(ip);
 
             SMOT_IO.CSVFile csv = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\RainfallData.csv", true);
-            TestModels.SampleInputParams testIn = new TestModels.SampleInputParams();
+            //TestModels.SampleInputParams testIn = new TestModels.SampleInputParams();
+            SMOT_IO.InputParams input = new SMOT_IO.InputParams(args);
 
-            ModelExecutor modelManager = new ModelExecutor(testIn.input, csv);
-            modelManager.RunModel();
-            modelManager.PresentOutput();
+            //ModelExecutor modelManager = new ModelExecutor(input, csv);
+            //modelManager.RunModel();
+            //modelManager.PresentOutput();
         }
     }
 

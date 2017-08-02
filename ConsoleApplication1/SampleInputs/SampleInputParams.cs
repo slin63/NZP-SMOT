@@ -21,7 +21,7 @@ namespace TestModels
             input.storageDepthImpervious = 0.05;
             input.storageDepthPervious = 0.15;
             input.totalDevelImpArea = 1;
-            input.effectiveBMPDepth = 27;
+            input.effectiveBMPDepth = 30;
             input.EISA438 = true;
             input.EISA438_WQ = "N/A";
             input.applTMDL = false;
@@ -44,8 +44,8 @@ namespace TestModels
             input.ETInfo.ETNov = 0.01870;
             input.ETInfo.ETDec = 0.01154;
 
-            input.hsgAreaA = 1.0;
-            input.hsgAreaB = 0;
+            input.hsgAreaA = .5;
+            input.hsgAreaB = .5;
             input.hsgAreaC  = 0;
             input.hsgAreaD = 0;
 

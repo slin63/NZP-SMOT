@@ -52,17 +52,14 @@ namespace Simulation
             //double netBmpOverflow = __netBmpOverflow(timeseriesSummary, yearsSimulated);
             //double netPervRunoff = __netPervRunoff(timeseriesSummary, yearsSimulated);
 
-            double bmpArea = _solveBmpArea(timeseriesSummary, bmp, timeSpan, yearsSimulated);
+            double bmpArea = _solveBmpArea(timeseriesSummary, bmp, yearsSimulated);
 
             bmp.bmpArea = bmpArea;
         }
 
-        private static double _solveBmpArea(List<SMOT_IO.Timeseries> timeseries, Modules.BMP bmp, int timeSpan, double yearsSimulated)
+        private static double _solveBmpArea(List<SMOT_IO.Timeseries> timeseries, Modules.BMP bmp, double yearsSimulated)
         {
-            // TODO!!!!!! FINISH WRITING THIS SOLVEBMPAREA FUNCTION
-            Simulation.AreaSolver.SolveBMPArea(timeseries, bmp, timeSpan, yearsSimulated);
-
-            return -9999;
+            return Simulation.AreaSolver.SolveBMPArea(timeseries, bmp, yearsSimulated);
         }
 
         private static List<SMOT_IO.Timeseries> _calculateWaterBalance(SMOT_IO.ETInfo ETInfo, SMOT_IO.AnalysisParams medianInfo,

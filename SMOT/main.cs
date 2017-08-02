@@ -11,23 +11,13 @@ namespace Exec
     {
         public static void Main(string[] args)
         {
-            //SMOT_IO.XMLReader reader = new SMOT_IO.XMLReader("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\SMOTInput.xml");
-            //reader.ExtractInput();
-            //SMOT_IO.CSVFile csv = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\RainfallData.csv", true);
-            ////var test = Preprocessing.Rainfall._rainPerDay(csv);
-            //Preprocessing.Rainfall.calc95thPercentile(csv, ref ip);
-            //Preprocessing.Rainfall.calcAverageDryDays(csv, ref ip);
-
-            //ModelExecutor modelManager = new ModelExecutor(ip);
-
-            SMOT_IO.CSVFile csv = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\ConsoleApplication1\\SampleInputs\\RainfallData.csv", true);
+            //SMOT_IO.CSVFile rainfallTimeSeriesCSV = new SMOT_IO.CSVFile("C:\\Users\\RDCERSL9\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication1\\SMOT\\SampleInputs\\RainfallData.csv", true);
+            SMOT_IO.CSVFile rainfallTimeSeriesCSV = new SMOT_IO.CSVFile("..\\..\\SampleInputs\\RainfallData.csv", true);
             TestModels.SampleInputParams testIn = new TestModels.SampleInputParams();
             SMOT_IO.InputParams input = testIn.input;
-            //SMOT_IO.InputParams input = new SMOT_IO.InputParams(args);
-
-            // How are we going to load up the CSV? -> Use a ridiculously long CLI call and have a CLARGS parser read it.
-
-            ModelExecutor modelManager = new ModelExecutor(input, csv);
+            // How are we going to load up the CSV on NZP? 
+            //  -> Use a ridiculously long CLI call and have a CLARGS parser read it.
+            ModelExecutor modelManager = new ModelExecutor(input, rainfallTimeSeriesCSV);
             modelManager.RunModel();
             modelManager.PresentOutput();
         }

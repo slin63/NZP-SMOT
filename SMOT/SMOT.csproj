@@ -50,7 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analysis.cs" />
     <Compile Include="Classes\XMLReader.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Preprocessing\Rainfall.cs" />
@@ -62,7 +61,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Preprocessing\Validation.cs" />
     <Compile Include="Simulation\Simulation.cs" />
-    <Compile Include="Simulation\Solver\ExcelInterop.cs" />
     <Compile Include="Simulation\Solver\Solver.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +68,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="InputFiles\RainfallData.csv" />
+    <None Include="SampleInputs\CLIRainfallData.csv" />
     <None Include="SampleInputs\RainfallData.csv" />
   </ItemGroup>
   <ItemGroup>

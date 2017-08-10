@@ -108,49 +108,51 @@ namespace SMOT_IO
             applTMDL_WQ            = (args[9]);
             MS4                    = Convert.ToBoolean(args[10]);
             MS4_WQ                 = (args[11]);
-                                     
-            ETInfo.ETJan           = Convert.ToDouble(args[12]);
-            ETInfo.ETFeb           = Convert.ToDouble(args[13]);
-            ETInfo.ETMarch         = Convert.ToDouble(args[14]);
-            ETInfo.ETApril         = Convert.ToDouble(args[15]);
-            ETInfo.ETMay           = Convert.ToDouble(args[16]);
-            ETInfo.ETJune          = Convert.ToDouble(args[17]);
-            ETInfo.ETJuly          = Convert.ToDouble(args[18]);
-            ETInfo.ETAug           = Convert.ToDouble(args[19]);
-            ETInfo.ETSep           = Convert.ToDouble(args[20]);
-            ETInfo.ETOct           = Convert.ToDouble(args[21]);
-            ETInfo.ETNov           = Convert.ToDouble(args[22]);
-            ETInfo.ETDec           = Convert.ToDouble(args[23]);
 
-            hsgAreaA               = Convert.ToDouble(args[24]);
-            hsgAreaB               = Convert.ToDouble(args[25]);
-            hsgAreaC               = Convert.ToDouble(args[26]);
-            hsgAreaD               = Convert.ToDouble(args[27]);
+            majorOnlinePond        = Convert.ToBoolean(args[12]);
+                                     
+            ETInfo.ETJan           = Convert.ToDouble(args[13]);
+            ETInfo.ETFeb           = Convert.ToDouble(args[14]);
+            ETInfo.ETMarch         = Convert.ToDouble(args[15]);
+            ETInfo.ETApril         = Convert.ToDouble(args[16]);
+            ETInfo.ETMay           = Convert.ToDouble(args[17]);
+            ETInfo.ETJune          = Convert.ToDouble(args[18]);
+            ETInfo.ETJuly          = Convert.ToDouble(args[19]);
+            ETInfo.ETAug           = Convert.ToDouble(args[20]);
+            ETInfo.ETSep           = Convert.ToDouble(args[21]);
+            ETInfo.ETOct           = Convert.ToDouble(args[22]);
+            ETInfo.ETNov           = Convert.ToDouble(args[23]);
+            ETInfo.ETDec           = Convert.ToDouble(args[24]);
+
+            hsgAreaA               = Convert.ToDouble(args[25]);
+            hsgAreaB               = Convert.ToDouble(args[26]);
+            hsgAreaC               = Convert.ToDouble(args[27]);
+            hsgAreaD               = Convert.ToDouble(args[28]);
 
             hsgA = new SMOT_IO.HSGInfo();
             hsgB = new SMOT_IO.HSGInfo();
             hsgC = new SMOT_IO.HSGInfo();
             hsgD = new SMOT_IO.HSGInfo();
 
-            hsgA.infilMax          = Convert.ToDouble(args[28]);
-            hsgA.infilMin          = Convert.ToDouble(args[29]);
-            hsgA.dryDays           = Convert.ToDouble(args[30]);
-            hsgA.decayRate         = Convert.ToDouble(args[31]);
-            
-            hsgB.infilMax          = Convert.ToDouble(args[32]);
-            hsgB.infilMin          = Convert.ToDouble(args[33]);
-            hsgB.dryDays           = Convert.ToDouble(args[34]);
-            hsgB.decayRate         = Convert.ToDouble(args[35]);
+            hsgA.infilMax          = Convert.ToDouble(args[29]);
+            hsgA.infilMin          = Convert.ToDouble(args[30]);
+            hsgA.dryDays           = Convert.ToDouble(args[31]);
+            hsgA.decayRate         = Convert.ToDouble(args[32]);
                                                            
-            hsgC.infilMax          = Convert.ToDouble(args[36]);
-            hsgC.infilMin          = Convert.ToDouble(args[37]);
-            hsgC.dryDays           = Convert.ToDouble(args[38]);
-            hsgC.decayRate         = Convert.ToDouble(args[39]);
+            hsgB.infilMax          = Convert.ToDouble(args[33]);
+            hsgB.infilMin          = Convert.ToDouble(args[34]);
+            hsgB.dryDays           = Convert.ToDouble(args[35]);
+            hsgB.decayRate         = Convert.ToDouble(args[36]);
                                                            
-            hsgD.infilMax          = Convert.ToDouble(args[40]);
-            hsgD.infilMin          = Convert.ToDouble(args[41]);
-            hsgD.dryDays           = Convert.ToDouble(args[42]);
-            hsgD.decayRate         = Convert.ToDouble(args[43]);
+            hsgC.infilMax          = Convert.ToDouble(args[37]);
+            hsgC.infilMin          = Convert.ToDouble(args[38]);
+            hsgC.dryDays           = Convert.ToDouble(args[39]);
+            hsgC.decayRate         = Convert.ToDouble(args[40]);
+                                                           
+            hsgD.infilMax          = Convert.ToDouble(args[41]);
+            hsgD.infilMin          = Convert.ToDouble(args[42]);
+            hsgD.dryDays           = Convert.ToDouble(args[43]);
+            hsgD.decayRate         = Convert.ToDouble(args[44]);
             _debugArgs(args);
         }
         #endregion  
@@ -201,6 +203,20 @@ namespace SMOT_IO
         private String _fileLocation;
         public List<CSVRow> rows = new List<CSVRow>();
         public bool hasHeader;
+
+        public CSVFile(string[] args)
+        {
+            // Starting at 45 because that's the index where RainfallTimeseries data is passed to us
+            for (int i = 45; i < args.Length; i += 2)
+            {
+                string dateTime = args[i];
+                string rainfall = args[i + 1];
+                string rowString = String.Format("{0},{1}", dateTime, rainfall);
+
+                CSVRow lineProcessed = new CSVRow(rowString);
+                this.rows.Add(lineProcessed);
+            }
+        }
 
         public CSVFile(String fileLocation, bool hasHeader)
         {

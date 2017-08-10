@@ -23,13 +23,15 @@ namespace TestModels
             input.totalDevelImpArea = 1;
             input.effectiveBMPDepth = 30;
             input.EISA438 = true;
-            input.EISA438_WQ = "N/A";
+            input.EISA438_WQ = "test";
             input.applTMDL = false;
             input.applTMDL_WQ = "N/A";
             input.MS4 = false;
             input.MS4_WQ = "N/A";
             //input.percentile95Rainfall = 2.59;
             //input.averageDryDays = 4.70;
+
+            input.majorOnlinePond = false;
 
             input.ETInfo.ETJan = .01302;
             input.ETInfo.ETFeb = 0.01939;
@@ -44,10 +46,10 @@ namespace TestModels
             input.ETInfo.ETNov = 0.01870;
             input.ETInfo.ETDec = 0.01154;
 
-            input.hsgAreaA = .5;
-            input.hsgAreaB = .5;
-            input.hsgAreaC  = 0;
-            input.hsgAreaD = 0;
+            input.hsgAreaA = .25;
+            input.hsgAreaB = .25;
+            input.hsgAreaC  = .25;
+            input.hsgAreaD = .25;
 
             input.hsgA = new SMOT_IO.HSGInfo();
             input.hsgB = new SMOT_IO.HSGInfo();

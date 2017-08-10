@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,11 +23,24 @@ namespace Exec
 
             // Placeholder 
             SMOT_IO.CSVFile rainfallTimeSeriesCSV = new SMOT_IO.CSVFile("..\\..\\SampleInputs\\RainfallData.csv", true);
+            InputParams input = null;
+            CSVFile rainfallTimeseries = null;
 
+            if (args.Length == 0)
+            {
+                var CLICall = testCallStrings.CLICallFromTestInput(new TestModels.SampleInputParams(), ("..\\..\\SampleInputs\\CLIRainfallData.csv"));
+                input = new SMOT_IO.InputParams(CLICall);
+                rainfallTimeseries = new SMOT_IO.CSVFile(CLICall);
+            }
             // CLICall represents string[] Main.args, built up from test input parameters
-            var CLICall = testCallStrings.CLICallFromTestInput(new TestModels.SampleInputParams(), ("..\\..\\SampleInputs\\CLIRainfallData.csv"));
-            var input = new SMOT_IO.InputParams(CLICall);
-            var rainfallTimeseries = new SMOT_IO.CSVFile(CLICall);
+
+            else
+            {
+                // For when we get an actual CLI call
+                input = new SMOT_IO.InputParams(args);
+                rainfallTimeseries = new SMOT_IO.CSVFile(args);
+            }
+
 
             ModelExecutor modelManager = new ModelExecutor(input, rainfallTimeseries);
             modelManager.RunModel();
@@ -35,7 +49,7 @@ namespace Exec
     }
 
     static class testCallStrings
-    {
+    {   
         public static string[] CLICallFromTestInput(TestModels.SampleInputParams testIn, string rainfallTimeseriesDirectory)
         {
             List<string> args = new List<string>();
@@ -94,12 +108,10 @@ namespace Exec
                 {
                     String line = reader.ReadLine();
                     rainfallTimeseries = rainfallTimeseries.Concat(line.Split(',').ToList()).ToList();
-                    Console.WriteLine(line);
                 }
             }
 
             args = args.Concat(rainfallTimeseries).ToList();
-
             return args.ToArray<string>();
         }
     }

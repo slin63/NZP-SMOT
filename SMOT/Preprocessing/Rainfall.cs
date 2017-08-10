@@ -73,9 +73,11 @@ namespace Preprocessing
             List<double> rainPerDay = new List<double>();
             foreach (SMOT_IO.CSVRow row in rainfallSheet.rows)
             {
-                DateTime currentDate = DateTime.Parse(row.row[0]);
+                Console.WriteLine(row.row[0]);
+                Console.WriteLine(row.row[1]);
 
-                currentTotalRain += Double.Parse(row.row[1]);
+                DateTime currentDate = DateTime.Parse(row.row[0]);
+                currentTotalRain += Convert.ToDouble(row.row[1]);
                 i++;
 
                 if (i % 24 == 0)

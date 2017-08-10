@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define NOCLARGS
+#undef NOCLARGS
+using System;
 using System.Collections.Generic;
 
 namespace SMOT_IO
@@ -206,16 +208,32 @@ namespace SMOT_IO
 
         public CSVFile(string[] args)
         {
+#if NOCLARGS
+            int LINESKIP = 2;
+            int RAINFALLSKIP = 1;
+#else
+            int LINESKIP = 3;
+            int RAINFALLSKIP = 2;
+#endif
             // Starting at 45 because that's the index where RainfallTimeseries data is passed to us
-            for (int i = 45; i < args.Length; i += 2)
+            for (int i = 45; i < args.Length; i += LINESKIP)
             {
-                string dateTime = args[i];
-                string rainfall = args[i + 1];
-                string rowString = String.Format("{0},{1}", dateTime, rainfall);
+                try
+                {
+                    string dateTime = args[i];
+                    string rainfall = args[i + RAINFALLSKIP];
+                    string rowString = String.Format("{0},{1}", dateTime, rainfall);
 
-                CSVRow lineProcessed = new CSVRow(rowString);
-                this.rows.Add(lineProcessed);
+                    CSVRow lineProcessed = new CSVRow(rowString);
+                    this.rows.Add(lineProcessed);
+                }
+                catch (System.IndexOutOfRangeException e)
+                {
+                    Console.WriteLine(String.Format("OUT OF RANGE: \n\tindex {0}", i), e.Message);
+                }
+                
             }
+
         }
 
         public CSVFile(String fileLocation, bool hasHeader)
@@ -363,6 +381,6 @@ namespace SMOT_IO
             this.runoffPerv = runoffPerv;
         }
     }
-    #endregion
+#endregion
 }
 

@@ -71,23 +71,28 @@ namespace Preprocessing
             int i = 0;
             double currentTotalRain = 0;
             List<double> rainPerDay = new List<double>();
+           
             foreach (SMOT_IO.CSVRow row in rainfallSheet.rows)
             {
-                Console.WriteLine(row.row[0]);
-                Console.WriteLine(row.row[1]);
-
-                DateTime currentDate = DateTime.Parse(row.row[0]);
-                currentTotalRain += Convert.ToDouble(row.row[1]);
-                i++;
-
-                if (i % 24 == 0)
+                try
                 {
-                    i = 0;
+                    DateTime currentDate = DateTime.Parse(row.row[0]);
+                    currentTotalRain += Convert.ToDouble(row.row[1]);
+                    i++;
 
-                    if (currentTotalRain >= threshold)
-                        rainPerDay.Add(currentTotalRain);
+                    if (i % 24 == 0)
+                    {
+                        i = 0;
 
-                    currentTotalRain = 0;
+                        if (currentTotalRain >= threshold)
+                            rainPerDay.Add(currentTotalRain);
+
+                        currentTotalRain = 0;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine("ERROR PARSING ROW: " + row.row[0] + " " + row.row[1] + " " + e.Message);
                 }
             }
 

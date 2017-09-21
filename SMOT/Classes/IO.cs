@@ -1,5 +1,4 @@
 ﻿#define NOCLARGS
-#undef NOCLARGS
 using System;
 using System.Collections.Generic;
 
@@ -155,7 +154,7 @@ namespace SMOT_IO
             hsgD.infilMin          = Convert.ToDouble(args[42]);
             hsgD.dryDays           = Convert.ToDouble(args[43]);
             hsgD.decayRate         = Convert.ToDouble(args[44]);
-            _debugArgs(args);
+
         }
         #endregion  
 
@@ -216,13 +215,28 @@ namespace SMOT_IO
             int RAINFALLSKIP = 2;
 #endif
             // Starting at 45 because that's the index where RainfallTimeseries data is passed to us
-            for (int i = 45; i < args.Length; i += LINESKIP)
+            int RAINFALLDATA_START_INDEX = 45;
+
+            for (int i = RAINFALLDATA_START_INDEX; i < args.Length; i += LINESKIP)
             {
                 try
                 {
-                    string dateTime = args[i];
-                    string rainfall = args[i + RAINFALLSKIP];
-                    string rowString = String.Format("{0},{1}", dateTime, rainfall);
+                    string dateTime;
+                    string rainfall;
+                    string rowString;
+
+                    try
+                    {
+                        dateTime = args[i];
+                        rainfall = args[i + RAINFALLSKIP];
+                        Convert.ToDouble(rainfall); // Checks if rainfall is a valid double
+                        rowString = String.Format("{0},{1}", dateTime, rainfall);
+                    }
+                    catch (System.FormatException e)
+                    {
+                        Console.WriteLine(e.Message + " OBJECT: [\"" + args[i] + " " + args[i + RAINFALLSKIP] + "\"]");
+                        continue;
+                    }
 
                     CSVRow lineProcessed = new CSVRow(rowString);
                     this.rows.Add(lineProcessed);

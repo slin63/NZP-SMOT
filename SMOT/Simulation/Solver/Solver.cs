@@ -18,8 +18,13 @@ namespace Simulation
             double storage = 0;
             double currentArea = bmp.bmpArea;
 
-            double areaDependentDepth;
+            double INCREMENT_AMOUNT = 1;
 
+            double areaDependentDepth;
+#if DEBUG
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            Console.WriteLine("CALCULATING BMP AREA");
+#endif
             do
             {
                 {
@@ -47,19 +52,17 @@ namespace Simulation
                             netOverflow += Math.Max(0, areaDependentDepth - (previousStorage + bmp.bmpInfilt + currentRow.ET)) * currentArea / 43560;
                         }
                     }
-
-                    Console.WriteLine(String.Format("DIFF: {0}\n\tAREA: {1}", netPRunoff - netOverflow, currentArea));
-
-                    currentArea += 1;
-
-                    //if ((netPRunoff - netOverflow) / yearsSimulated > 0)
-                    //{
-                    //    Console.WriteLine("netPRunoff: {0}\nnetOverFlow: {1}\nYears: {2}", netPRunoff, netOverflow, yearsSimulated);
-                    //}
+                    
+                    currentArea += INCREMENT_AMOUNT;
                 }
             }
             while (((netPRunoff - netOverflow) / yearsSimulated) < 0);
 
+#if DEBUG
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine(String.Format("BMP AREA: {0}\n\tTIME: {1}", currentArea, elapsedMs));
+#endif 
             return currentArea;
         }
 

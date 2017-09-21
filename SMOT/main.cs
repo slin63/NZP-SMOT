@@ -1,4 +1,5 @@
-﻿
+﻿#define DEBUG
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,13 @@ namespace Exec
             //modelManager.PresentOutput();
 
             // Placeholder 
-            SMOT_IO.CSVFile rainfallTimeSeriesCSV = new SMOT_IO.CSVFile("..\\..\\SampleInputs\\RainfallData.csv", true);
+            //SMOT_IO.CSVFile rainfallTimeSeriesCSV = new SMOT_IO.CSVFile("..\\..\\SampleInputs\\RainfallData.csv", true);
             InputParams input = null;
             CSVFile rainfallTimeseries = null;
 
             if (args.Length == 0)
             {
-                var CLICall = testCallStrings.CLICallFromTestInput(new TestModels.SampleInputParams(), ("..\\..\\SampleInputs\\CLIRainfallData.csv"));
+                var CLICall = testCallStrings.CLICallFromTestInput(new TestModels.SampleInputParams(), ("..\\..\\SampleInputs\\RainfallData.csv"));
                 input = new SMOT_IO.InputParams(CLICall);
                 rainfallTimeseries = new SMOT_IO.CSVFile(CLICall);
             }
@@ -104,11 +105,20 @@ namespace Exec
             using (var fs = System.IO.File.OpenRead(rainfallTimeseriesDirectory))
             using (var reader = new System.IO.StreamReader(fs))
             {
+#if DEBUG
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                Console.WriteLine("READING RAINFALL TIMESERIES");
+#endif
                 while (!reader.EndOfStream)
                 {
                     String line = reader.ReadLine();
                     rainfallTimeseries = rainfallTimeseries.Concat(line.Split(',').ToList()).ToList();
                 }
+#if DEBUG
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                Console.WriteLine(String.Format("FINISHED READING RAINFALL TIMESERIES\n\tTIME: {0}", elapsedMs));
+#endif
             }
 
             args = args.Concat(rainfallTimeseries).ToList();
